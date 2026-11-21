@@ -45,6 +45,26 @@ import_map = "./functions/bootstrap-owner/deno.json"
 verify_jwt = false
 import_map = "./functions/meta-webhook/deno.json"
 
+[functions.meta-instagram-oauth-start]
+verify_jwt = true
+import_map = "./functions/meta-instagram-oauth-start/deno.json"
+
+[functions.meta-instagram-oauth-callback]
+verify_jwt = false
+import_map = "./functions/meta-instagram-oauth-callback/deno.json"
+
+[functions.meta-instagram-admin]
+verify_jwt = true
+import_map = "./functions/meta-instagram-admin/deno.json"
+
+[functions.meta-business-oauth-start]
+verify_jwt = true
+import_map = "./functions/meta-business-oauth-start/deno.json"
+
+[functions.meta-business-oauth-callback]
+verify_jwt = false
+import_map = "./functions/meta-business-oauth-callback/deno.json"
+
 [functions.asaas-webhook]
 verify_jwt = false
 import_map = "./functions/asaas-webhook/deno.json"
@@ -58,4 +78,3 @@ import_map = "./functions/payments/deno.json"
 [functions.lead-intake]
 verify_jwt = false
 import_map = "./functions/lead-intake/deno.json"
-

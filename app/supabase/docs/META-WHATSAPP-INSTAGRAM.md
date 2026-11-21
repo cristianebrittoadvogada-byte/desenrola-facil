@@ -1,6 +1,6 @@
 # Módulo Meta — WhatsApp e Instagram
 
-Status: arquitetura e auxiliares de segurança preparados; nenhuma Meta App foi criada, nenhum ativo foi conectado e nenhum webhook foi inscrito.
+Status: OAuth oficial de Instagram, consulta de Portfólio somente leitura, Vault e publicação por confirmação estão implementados no ambiente de homologação. Nenhuma Meta App foi criada/configurada e nenhuma conta, credencial ou webhook foi conectada ainda.
 
 ## Fluxo planejado
 
@@ -33,7 +33,7 @@ Os webhooks previstos incluem mensagens e eventos necessários para encaminhamen
 
 ## Webhooks, tokens e armazenamento
 
-1. Endpoint somente HTTPS; GET de verificação valida hub.mode, hub.verify_token e devolve hub.challenge. O verify token fica em secret manager, não no banco.
+1. Endpoint somente HTTPS; GET de verificação valida hub.mode, hub.verify_token e devolve hub.challenge. App Secret, token Instagram e verify token ficam no Supabase Vault; as funções de acesso ao Vault só podem ser chamadas por service_role.
 2. POST lê o corpo bruto e valida X-Hub-Signature-256 (HMAC-SHA256 com App Secret) antes de interpretar JSON. O auxiliar em functions/meta-webhook/security.mjs faz essa validação e tem teste sintético.
 3. Validar também produto, IDs de conta assinados e campos permitidos; limitar tamanho, registrar apenas códigos de erro seguros e nunca colocar token ou mensagem completa em logs.
 4. Criar chave idempotente estável por conta, ID de mensagem/evento, tipo e timestamp. Registrar metadados/estado/retentativas em integration_events; índice impede duplicação das mensagens normalizadas. Responder rapidamente após persistência segura, processar com tentativas limitadas e fila de falhas.
@@ -55,11 +55,14 @@ A fundadora precisará entrar diretamente em Meta Business Suite e Meta for Deve
 
 - Acesso administrativo às contas empresariais, Instagram profissional e WABA/número escolhido.
 - Uma Meta App em Development Mode, contas de teste e webhooks de teste.
-- Assinatura da URL HTTPS e geração de App Secret/Verify Token no painel; os valores serão cadastrados apenas em configuração segura.
+- App Instagram com Business Login, Instagram App ID/Secret e permissão de publicação; App Secret será cadastrado no painel HTTPS e guardado no Vault. O OAuth valida a conta-alvo `@cristianebritto.desenrola` e persiste token longo criptografado.
+- Callbacks a registrar na Meta: `https://nmkneyzyxxhebkurgimh.supabase.co/functions/v1/meta-instagram-oauth-callback` e `https://nmkneyzyxxhebkurgimh.supabase.co/functions/v1/meta-business-oauth-callback`.
+- Para consultar o vínculo do Portfólio, habilitar Facebook Login e `business_management`; o fluxo consulta apenas `me/businesses`, `owned_instagram_assets` e `client_instagram_assets`, sem alterar ativos.
+- O verify token do webhook é gerado no Vault e pode ser revelado sob demanda no painel autenticado; o endpoint validará assinatura HMAC com o App Secret.
 - Se a integração for usada com clientes fora das funções da app: Business Verification, App Review/Advanced Access, Data Use Checkup e políticas de privacidade/deleção de dados conforme a avaliação Meta.
 - Para produção: consentimento da pessoa, templates e regras de mensagem; teste de coexistência do número WhatsApp; teste de janela, handoff, reentrega e duplicação de webhooks.
 
-Nesta Fase 1 não foi criada conta Meta, não foi pedida permissão Meta, não há tokens nem URL de webhook registrada. O módulo permanece preparado para conectar e testar com ativos de teste na próxima fase autorizada.
+Os endpoints OAuth e webhook estão publicados no projeto Supabase de homologação. Ainda não houve login Meta, leitura real do perfil/Portfólio, teste de publicação ou inscrição do webhook porque a Meta App e a autorização da titular não estão configuradas.
 
 
 
@@ -70,6 +73,8 @@ Nesta Fase 1 não foi criada conta Meta, não foi pedida permissão Meta, não h
 - [Meta Webhooks: HTTPS, challenge, X-Hub-Signature-256 e retentativas](https://developers.facebook.com/docs/graph-api/webhooks/getting-started/)
 - [Instagram Messaging overview](https://developers.facebook.com/documentation/business-messaging/instagram-messaging)
 - [Instagram Login: permissões novas e ausência de exigência de Página](https://developers.facebook.com/docs/instagram/platform/instagram-api/changelog/)
+- [Business Login para Instagram: OAuth, permissões atuais e renovação do token](https://developers.facebook.com/documentation/instagram-platform/instagram-api-with-instagram-login/business-login)
+- [Instagram assets no Portfólio empresarial](https://developers.facebook.com/docs/business-management-apis/business-asset-management/guides/instagram-accounts)
 - [Webhooks de Instagram](https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-instagram)
 - [Changelog Instagram Messaging e Conversation Routing](https://developers.facebook.com/documentation/business-messaging/instagram-messaging/changelog/)
 - [Meta: Standard Access, Advanced Access e acesso a pessoas fora da função do app](https://developers.facebook.com/docs/resp-plat-initiatives/individual-processes/data-handling-questions/faqs/)

@@ -20,6 +20,7 @@
     <section class="panel setup" id="setup">
       <div class="section-heading"><div><p class="eyebrow">AMBIENTE CONECTADO</p><h2>Desenrola Fácil — Homologação</h2></div></div>
       <p class="muted">Projeto <code>nmkneyzyxxhebkurgimh</code>. O painel usa uma chave pública, adequada para o navegador. Dados empresariais continuam protegidos por login, permissões e políticas RLS. O cadastro público permanece desativado.</p>
+      <p id="meta-oauth-result" class="notice" role="status" aria-live="polite" hidden></p>
     </section>
 
     <section class="panel login" id="login">
@@ -76,6 +77,7 @@
         <button type="button" data-view="agenda">Agenda</button>
         <button type="button" data-view="experiences">Vivências e mentorias</button>
         <button type="button" data-view="conversations">Atendimento</button>
+        <button type="button" data-view="integrations" hidden>Integrações</button>
       </nav>
 
       <section class="module-view" id="view-dashboard">
@@ -180,7 +182,45 @@
           </article>
         </div>
       </section>
-      <p class="fine-print test-warning">Homologação. Utilize somente dados fictícios. WhatsApp, Instagram e Asaas permanecem desconectados até credenciais e configurações oficiais serem adicionadas.</p>
+
+      <section class="module-view" id="view-integrations" hidden>
+        <article class="panel">
+          <div class="section-heading"><div><p class="eyebrow">META · INSTAGRAM</p><h3>Conexão oficial</h3></div><button id="meta-status-refresh" class="button-secondary" type="button">Verificar conexão</button></div>
+          <p id="meta-instagram-status" class="notice" role="status" aria-live="polite">Verificando integração...</p>
+          <p class="muted">O OAuth usa Instagram Login, solicita somente as permissões configuradas para perfil, publicação, mensagens e comentários, e valida que a conta autorizada é @cristianebritto.desenrola.</p>
+          <form id="meta-app-form" class="form-grid">
+            <label>Instagram App ID<input id="meta-app-id" inputmode="numeric" autocomplete="off" maxlength="32" required></label>
+            <label>Instagram App Secret<input id="meta-app-secret" type="password" autocomplete="new-password" maxlength="512" required></label>
+            <button type="submit">Guardar credenciais na Meta Vault</button>
+          </form>
+          <p class="fine-print">O App Secret é enviado por HTTPS ao backend Supabase e guardado no Vault criptografado. Ele não é salvo pelo navegador nem exibido após o envio.</p>
+          <div class="integration-actions"><button id="meta-instagram-connect" type="button" disabled>Conectar @cristianebritto.desenrola</button><code id="meta-instagram-callback"></code></div>
+        </article>
+        <article class="panel">
+          <div class="section-heading"><div><p class="eyebrow">META · PORTFÓLIO</p><h3>Vínculo empresarial</h3></div><button id="meta-business-check" class="button-secondary" type="button" disabled>Verificar Portfólio</button></div>
+          <p class="muted">A verificação usa OAuth oficial com permissão somente de leitura <code>business_management</code>. Não altera a propriedade nem as permissões dos ativos.</p>
+          <p id="meta-business-status" class="notice" role="status" aria-live="polite">Aguardando configuração do app Meta.</p>
+          <p class="fine-print">Callback de verificação: <code id="meta-business-callback"></code></p>
+        </article>
+        <article class="panel">
+          <div class="section-heading"><div><p class="eyebrow">META · WEBHOOK</p><h3>Recebimento de eventos</h3></div><button id="meta-webhook-config" class="button-secondary" type="button" disabled>Mostrar configuração</button></div>
+          <p class="muted">O verify token é mostrado somente após solicitação autenticada de uma pessoa administradora. Use-o ao validar o callback no App Dashboard.</p>
+          <p class="fine-print">Callback: <code id="meta-webhook-url"></code></p>
+          <p id="meta-webhook-verify-token" class="secret-display" hidden></p>
+          <button id="meta-webhook-copy" class="button-secondary" type="button" hidden>Copiar verify token</button>
+        </article>
+        <article class="panel">
+          <div class="section-heading"><div><p class="eyebrow">PUBLICAÇÃO</p><h3>Publicar uma imagem aprovada</h3></div></div>
+          <p class="muted">A publicação é imediata e exige confirmação explícita. A imagem deve estar em URL HTTPS pública e acessível pela Meta. A API de Instagram não permite editar bio ou destaques.</p>
+          <form id="meta-publish-form" class="form-grid">
+            <label>URL HTTPS pública da imagem<input id="meta-image-url" type="url" inputmode="url" maxlength="2000" placeholder="https://.../imagem.jpg" required></label>
+            <label class="wide-field">Legenda aprovada<textarea id="meta-caption" rows="5" maxlength="2200" required></textarea></label>
+            <button type="submit">Publicar no Instagram</button>
+          </form>
+          <p id="meta-publish-result" class="fine-print" role="status" aria-live="polite"></p>
+        </article>
+      </section>
+      <p class="fine-print test-warning">Homologação. Utilize somente dados fictícios. WhatsApp e Asaas permanecem desconectados até suas autorizações oficiais; a conexão Meta exibida acima reflete a verificação remota.</p>
     </section>
   </main>
   <footer><span>Desenrola Fácil® — painel de homologação</span><span>Dados de teste somente</span></footer>

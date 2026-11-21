@@ -7,11 +7,10 @@ import { verifyMetaWebhookChallenge, verifyMetaWebhookSignature } from "./securi
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const appSecret = Deno.env.get("META_APP_SECRET") ?? "";
-const verifyToken = Deno.env.get("META_WEBHOOK_VERIFY_TOKEN") ?? "";
 const database = supabaseUrl && serviceKey
   ? createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
   : null;
+const graphVersion = Deno.env.get("META_GRAPH_VERSION") ?? "v27.0";
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -34,6 +33,23 @@ function waitUntil(promise) {
   const runtime = Reflect.get(globalThis, "EdgeRuntime");
   if (runtime && typeof runtime.waitUntil === "function") runtime.waitUntil(promise);
   else void promise;
+}
+
+async function loadMetaCredentials() {
+  if (!database) return null;
+  const { data: settings, error: settingsError } = await database.from("integration_settings")
+    .select("public_config,secret_reference").eq("provider", "instagram_graph").maybeSingle();
+  if (settingsError || !settings?.secret_reference) return null;
+  const { data, error } = await database.rpc("meta_instagram_secret_read", { p_secret_id: settings.secret_reference });
+  if (error || typeof data !== "string") return null;
+  let credential;
+  try { credential = JSON.parse(data); } catch { return null; }
+  return {
+    appSecret: typeof credential.app_secret === "string" ? credential.app_secret : "",
+    verifyToken: typeof credential.verify_token === "string" ? credential.verify_token : "",
+    instagramAccountId: typeof credential.account_id === "string" ? credential.account_id : "",
+    instagramAccessToken: typeof credential.access_token === "string" ? credential.access_token : "",
+  };
 }
 
 async function persistInbound(event) {
@@ -102,7 +118,7 @@ async function persistInbound(event) {
   return { jobId: job.id, contactId, threadId: thread.id };
 }
 
-async function processJob(event, references) {
+async function processJob(event, references, metaCredentials) {
   if (!references.jobId) return;
   const { data: job, error: jobReadError } = await database.from("automation_jobs")
     .select("id,status,attempts,thread_id,conversation_event_id")
@@ -190,11 +206,11 @@ async function processJob(event, references) {
   const sent = await sendMetaTextMessage({
     channel: event.channel, recipientId: event.senderId, text: reply,
     env: {
-      META_GRAPH_VERSION: Deno.env.get("META_GRAPH_VERSION"),
+      META_GRAPH_VERSION: graphVersion,
       WHATSAPP_PHONE_NUMBER_ID: Deno.env.get("WHATSAPP_PHONE_NUMBER_ID"),
       WHATSAPP_ACCESS_TOKEN: Deno.env.get("WHATSAPP_ACCESS_TOKEN"),
-      INSTAGRAM_ACCOUNT_ID: Deno.env.get("INSTAGRAM_ACCOUNT_ID"),
-      INSTAGRAM_ACCESS_TOKEN: Deno.env.get("INSTAGRAM_ACCESS_TOKEN"),
+      INSTAGRAM_ACCOUNT_ID: metaCredentials?.instagramAccountId,
+      INSTAGRAM_ACCESS_TOKEN: metaCredentials?.instagramAccessToken,
     },
   });
   if (!sent.ok) {
@@ -211,16 +227,20 @@ async function processJob(event, references) {
 
 Deno.serve(async (request) => {
   if (request.method === "GET") {
-    const challenge = verifyMetaWebhookChallenge(new URL(request.url).searchParams, verifyToken);
+    if (!database) return json({ error: "meta_webhook_not_configured" }, 503);
+    const credentials = await loadMetaCredentials();
+    const challenge = verifyMetaWebhookChallenge(new URL(request.url).searchParams, credentials?.verifyToken ?? "");
     return challenge ? new Response(challenge, { headers: { "Content-Type": "text/plain; charset=utf-8" } }) : json({ error: "invalid_challenge" }, 403);
   }
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  if (!database || !appSecret) return json({ error: "meta_webhook_not_configured" }, 503);
+  if (!database) return json({ error: "meta_webhook_not_configured" }, 503);
+  const metaCredentials = await loadMetaCredentials();
+  if (!metaCredentials?.appSecret) return json({ error: "meta_webhook_not_configured" }, 503);
 
   const raw = new Uint8Array(await request.arrayBuffer());
   if (raw.byteLength > 1_048_576) return json({ error: "request_too_large" }, 413);
   const signature = request.headers.get("x-hub-signature-256") ?? "";
-  if (!(await verifyMetaWebhookSignature(raw, signature, appSecret))) return json({ error: "invalid_signature" }, 401);
+  if (!(await verifyMetaWebhookSignature(raw, signature, metaCredentials.appSecret))) return json({ error: "invalid_signature" }, 401);
   let payload;
   try { payload = JSON.parse(new TextDecoder().decode(raw)); } catch { return json({ error: "invalid_json" }, 400); }
 
@@ -273,14 +293,14 @@ Deno.serve(async (request) => {
       if (references.duplicate) {
         await database.from("integration_events").update({ processing_status: "processed", processed_at: new Date().toISOString() }).eq("id", integrationId);
         if (references.jobId && ["queued", "retrying"].includes(references.jobStatus)) {
-          const work = processJob(event, references).catch(async () => {
+          const work = processJob(event, references, metaCredentials).catch(async () => {
             await database.from("automation_jobs").update({ status: "failed", safe_error_code: "processing_uncertain" }).eq("id", references.jobId);
           });
           waitUntil(work);
         }
       } else {
         await database.from("integration_events").update({ processing_status: "processed", processed_at: new Date().toISOString() }).eq("id", integrationId);
-        const work = processJob(event, references).catch(async () => {
+        const work = processJob(event, references, metaCredentials).catch(async () => {
           await database.from("automation_jobs").update({ status: "failed", safe_error_code: "processing_uncertain" }).eq("id", references.jobId);
         });
         waitUntil(work);
