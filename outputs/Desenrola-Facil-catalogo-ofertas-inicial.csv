@@ -1,0 +1,5 @@
+id;oferta;status;preco;moeda;formato;modalidade;duracao;local;canal_venda;observacoes;ultima_atualizacao
+MENTORIA-DESENROLA-FACIL;Mentoria Desenrola Fácil;aberta;3000,00;BRL;individual e coletivo;online;3 meses;;online;Confirmar se o preço informado se aplica igualmente aos dois formatos;2026-11-19
+LIVRO;Livro;aberta;69,90;BRL;produto editorial;;não se aplica;;online e canais digitais;Título, edição, estoque ou formato digital, frete e entrega ainda precisam ser cadastrados;2026-11-19
+CONSTELACAO-ONLINE;Constelação Sistêmica Online;aberta;799,99;BRL;atendimento individual;online;sessão, tempo a definir;;online;Duração, agenda e política de agendamento/cancelamento a definir;2026-11-19
+CONSTELACAO-PRESENCIAL;Constelação Sistêmica Presencial;aberta;999,99;BRL;atendimento individual;presencial;sessão, tempo a definir;Rio de Janeiro/RJ;venda direta;Duração, local de atendimento e política de agendamento/cancelamento a definir;2026-11-19

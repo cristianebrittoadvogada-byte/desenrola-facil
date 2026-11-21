@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11110f">
+  <title>Desenrola Fácil® — Painel</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div id="authGate" class="auth-gate hidden">
+    <section class="auth-card">
+      <div class="brand-mark">DF<span>®</span></div>
+      <p class="eyebrow">PAINEL ADMINISTRATIVO</p>
+      <h1 id="authTitle">Acesse seu espaço</h1>
+      <p id="authDescription" class="muted">Seus dados ficam neste computador.</p>
+      <form id="authForm">
+        <label for="authPassword">Senha</label>
+        <input id="authPassword" name="password" type="password" autocomplete="current-password" required minlength="12">
+        <label id="confirmLabel" for="authConfirm" class="hidden">Confirme a senha</label>
+        <input id="authConfirm" name="confirm" type="password" autocomplete="new-password" class="hidden" minlength="12">
+        <button id="authSubmit" class="button primary full" type="submit">Entrar</button>
+      </form>
+      <p id="authMessage" class="form-message" role="status"></p>
+      <p class="fine-print">Aplicação local · sem serviços externos conectados</p>
+    </section>
+  </div>
+
+  <div id="appShell" class="shell hidden">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Desenrola Fácil painel">
+        <span class="brand-mark small">DF<span>®</span></span>
+        <span class="brand-name">DESENROLA<br><b>FÁCIL</b></span>
+      </a>
+      <div class="workspace-label">ESPAÇO DA FUNDADORA</div>
+      <nav id="mainNav" class="nav-list" aria-label="Navegação principal">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">⌂</span>Visão geral</button>
+        <button class="nav-item" data-page="crm"><span class="nav-icon">◉</span>CRM <span id="navLeadCount" class="nav-count">0</span></button>
+        <button class="nav-item" data-page="sales"><span class="nav-icon">↗</span>Vendas</button>
+        <button class="nav-item" data-page="finance"><span class="nav-icon">＄</span>Financeiro</button>
+        <button class="nav-item" data-page="agenda"><span class="nav-icon">▦</span>Agenda</button>
+        <button class="nav-item" data-page="mentorships"><span class="nav-icon">◇</span>Mentorias</button>
+        <button class="nav-item" data-page="products"><span class="nav-icon">▤</span>Ofertas</button>
+        <button class="nav-item" data-page="integrations"><span class="nav-icon">⌘</span>Integrações</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-status"><i></i><span><b>Modo local</b><small>Dados neste computador</small></span></div>
+        <button id="logoutButton" class="nav-item logout"><span class="nav-icon">↪</span>Sair</button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div><p class="eyebrow" id="pageEyebrow">CENTRAL DE GESTÃO</p><h1 id="pageTitle">Visão geral</h1></div>
+        <div class="top-actions">
+          <span id="saveState" class="save-state"><i></i>Salvo neste computador</span>
+          <button id="restoreButton" class="button quiet">Importar backup</button>
+          <button id="backupButton" class="button quiet">Exportar backup</button>
+          <input id="restoreFile" type="file" accept="application/json,.json" class="hidden">
+          <button id="quickAddButton" class="button primary">＋ Novo contato</button>
+        </div>
+      </header>
+
+      <div class="content-wrap">
+        <section class="page active" id="page-dashboard">
+          <div class="welcome-row"><div><p class="eyebrow gold">DESENROLA FÁCIL® · PPDD®</p><h2>Bom trabalho, Cristiane.</h2><p class="muted">Acompanhe a operação da empresa em um só lugar.</p></div><div id="todayLabel" class="date-chip"></div></div>
+          <div class="metrics-grid">
+            <article class="metric-card"><span>Recebido</span><strong id="metricReceived">R$ 0,00</strong><small>Pagamentos confirmados</small><span class="metric-icon">↓</span></article>
+            <article class="metric-card"><span>A receber</span><strong id="metricReceivable">R$ 0,00</strong><small>Vendas pendentes</small><span class="metric-icon">◷</span></article>
+            <article class="metric-card"><span>Despesas pagas</span><strong id="metricExpenses">R$ 0,00</strong><small>Saídas confirmadas</small><span class="metric-icon">↑</span></article>
+            <article class="metric-card dark"><span>Caixa líquido</span><strong id="metricNet">R$ 0,00</strong><small>Recebido menos despesas pagas</small><span class="metric-icon">✦</span></article>
+          </div>
+          <div class="dashboard-grid">
+            <article class="panel"><div class="panel-heading"><div><p class="eyebrow">ACOMPANHAMENTO</p><h3>Relacionamentos</h3></div><button class="text-button" data-go="crm">Abrir CRM →</button></div><div class="mini-stats"><div><b id="dashLeads">0</b><span>Leads ativos</span></div><div><b id="dashClients">0</b><span>Clientes</span></div><div><b id="dashMentees">0</b><span>Mentorados</span></div></div><div class="divider"></div><div id="upcomingPreview" class="list-preview"></div></article>
+            <article class="panel"><div class="panel-heading"><div><p class="eyebrow">MOVIMENTAÇÃO</p><h3>Últimas vendas</h3></div><button class="text-button" data-go="sales">Ver vendas →</button></div><div id="salesPreview" class="list-preview"></div></article>
+          </div>
+          <div class="notice-strip"><span class="notice-icon">i</span><p><b>Operação manual por enquanto.</b> Recebimentos só são confirmados após sua conferência. Nenhum canal ou serviço externo está conectado.</p><button data-go="integrations" class="text-button">Ver integrações</button></div>
+        </section>
+
+        <section class="page" id="page-crm">
+          <div class="page-intro"><div><p class="eyebrow">RELACIONAMENTO</p><h2>CRM</h2><p class="muted">Leads, clientes e mentorados com histórico comercial essencial.</p></div><button class="button primary" data-modal="contact">＋ Novo contato</button></div>
+          <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="contactSearch" type="search" placeholder="Buscar nome, e-mail ou telefone"></div><select id="contactFilter"><option value="all">Todos os contatos</option><option value="Lead">Leads</option><option value="Cliente">Clientes</option><option value="Mentorado">Mentorados</option></select><button id="exportContacts" class="button quiet">Exportar CSV</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Contato</th><th>Perfil</th><th>Origem</th><th>Etapa</th><th>Próxima ação</th><th></th></tr></thead><tbody id="contactsTable"></tbody></table><div id="contactsEmpty" class="empty-state hidden"><span>◉</span><b>Seu CRM começa aqui</b><p>Cadastre um lead que chegou pelo Instagram, WhatsApp, site ou e-mail.</p><button class="button secondary" data-modal="contact">Cadastrar primeiro contato</button></div></div>
+        </section>
+
+        <section class="page" id="page-sales">
+          <div class="page-intro"><div><p class="eyebrow">COMERCIAL</p><h2>Vendas</h2><p class="muted">Registre vendas. O recebimento começa como pendente até ser conferido.</p></div><button class="button primary" data-modal="sale">＋ Registrar venda</button></div>
+          <div class="summary-row"><div class="summary-chip"><span>Vendas</span><b id="salesCount">0</b></div><div class="summary-chip"><span>Confirmadas</span><b id="salesPaidCount">0</b></div><div class="summary-chip"><span>Pendentes</span><b id="salesPendingCount">0</b></div></div>
+          <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="salesSearch" type="search" placeholder="Buscar cliente ou oferta"></div><select id="salesFilter"><option value="all">Todos os status</option><option value="Pendente">Pendente</option><option value="Recebido">Recebido</option><option value="Estornado">Estornado</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th>Data</th><th>Cliente</th><th>Oferta</th><th>Valor</th><th>Pagamento</th><th>Status</th><th></th></tr></thead><tbody id="salesTable"></tbody></table><div id="salesEmpty" class="empty-state hidden"><span>↗</span><b>Nenhuma venda registrada</b><p>As vendas registradas aqui também aparecem no controle financeiro.</p></div></div>
+        </section>
+
+        <section class="page" id="page-finance">
+          <div class="page-intro"><div><p class="eyebrow">CONTROLE MANUAL</p><h2>Financeiro</h2><p class="muted">Controle de caixa gerencial. Não substitui conciliação bancária ou contabilidade.</p></div><button class="button primary" data-modal="transaction">＋ Novo lançamento</button></div>
+          <div class="metrics-grid compact"><article class="metric-card"><span>Recebido</span><strong id="finReceived">R$ 0,00</strong><small>Entradas confirmadas</small></article><article class="metric-card"><span>A receber</span><strong id="finReceivable">R$ 0,00</strong><small>Entradas pendentes</small></article><article class="metric-card"><span>Despesas pagas</span><strong id="finExpenses">R$ 0,00</strong><small>Saídas confirmadas</small></article><article class="metric-card dark"><span>Caixa líquido</span><strong id="finNet">R$ 0,00</strong><small>Recebido − despesas pagas</small></article></div>
+          <div class="toolbar"><select id="transactionFilter"><option value="all">Todos os lançamentos</option><option value="Receita">Receitas</option><option value="Despesa">Despesas</option><option value="Pendente">Pendentes</option></select><button id="exportFinance" class="button quiet">Exportar CSV</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Categoria</th><th>Forma</th><th>Valor</th><th>Status</th><th></th></tr></thead><tbody id="transactionsTable"></tbody></table><div id="transactionsEmpty" class="empty-state hidden"><span>＄</span><b>Sem lançamentos</b><p>Registre entradas e despesas. Confirme os pagamentos só depois de verificar o recebimento.</p></div></div>
+        </section>
+
+        <section class="page" id="page-agenda">
+          <div class="page-intro"><div><p class="eyebrow">OPERAÇÃO</p><h2>Agenda</h2><p class="muted">Mentorias, atendimentos e vivências. Os dados ficam locais.</p></div><button class="button primary" data-modal="appointment">＋ Novo compromisso</button></div>
+          <div id="calendarList" class="agenda-list"></div>
+        </section>
+
+        <section class="page" id="page-mentorships">
+          <div class="page-intro"><div><p class="eyebrow">ENTREGA</p><h2>Mentorias</h2><p class="muted">Acompanhamento operacional. Evite registrar relatos íntimos ou dados clínicos.</p></div><button class="button primary" data-modal="mentorship">＋ Nova jornada</button></div>
+          <div id="mentorshipList" class="cards-grid"></div>
+        </section>
+
+        <section class="page" id="page-products">
+          <div class="page-intro"><div><p class="eyebrow">PORTFÓLIO</p><h2>Ofertas</h2><p class="muted">Preços e formatos editáveis sem mudar o código.</p></div><button class="button primary" data-modal="product">＋ Nova oferta</button></div>
+          <div id="productsList" class="product-grid"></div>
+        </section>
+
+        <section class="page" id="page-integrations">
+          <div class="page-intro"><div><p class="eyebrow">ARQUITETURA ABERTA</p><h2>Integrações</h2><p class="muted">Preparadas para documentação. Nenhuma conexão foi simulada ou ativada.</p></div></div>
+          <div class="integration-callout"><b>Conectores desligados por padrão</b><p>O painel opera manualmente. Quando uma integração for aprovada e implementada, o status só muda após teste real e registro técnico.</p></div>
+          <div id="integrationList" class="integration-grid"></div>
+          <article class="panel integration-doc"><p class="eyebrow">CONTRATO TÉCNICO</p><h3>Arquitetura para evolução</h3><p>O app usa interfaces de adaptação independentes para contatos, mensagens, cobranças, agenda e arquivos. As credenciais não são guardadas no painel nem no navegador. Integrações futuras devem usar variáveis de ambiente no servidor, permissões mínimas, logs sem dados sensíveis e um ambiente de teste antes da produção.</p><a href="/INTEGRATIONS.md" target="_blank" rel="noreferrer">Abrir documentação de integração</a></article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="recordDialog" class="record-dialog"><form id="recordForm" method="dialog"><div class="dialog-heading"><div><p class="eyebrow" id="dialogEyebrow">NOVO REGISTRO</p><h2 id="dialogTitle">Novo registro</h2></div><button type="button" class="icon-button" data-close aria-label="Fechar">×</button></div><div id="dialogFields" class="form-grid"></div><div class="dialog-actions"><button type="button" class="button quiet" data-close>Cancelar</button><button class="button primary" type="submit">Salvar</button></div><p id="dialogMessage" class="form-message" role="status"></p></form></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+services:
+  # Página comercial e painel administrativo separados no mesmo repositório privado.
+  - type: web
+    name: desenrola-facil-mentoria
+    runtime: static
+    rootDir: app/supabase/web/mentoria
+    buildCommand: echo "Static page; no build required"
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+  - type: web
+    name: desenrola-facil-painel
+    runtime: static
+    rootDir: app/supabase/web
+    buildCommand: echo "Static panel; no build required"
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://nmkneyzyxxhebkurgimh.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self' https://nmkneyzyxxhebkurgimh.supabase.co"

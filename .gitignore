@@ -9,4 +9,3 @@ app/supabase/backups/
 *.payload.tmp
 *.restore.tmp
 *.sql.private
-

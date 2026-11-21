@@ -1,0 +1,11 @@
+# Segredos e artefatos de backup não entram no versionamento
+.env
+.env.*
+!.env.example
+backups/
+*.dfb
+*.dfb.tmp
+*.payload.tmp
+*.restore.tmp
+*.sql.private
+

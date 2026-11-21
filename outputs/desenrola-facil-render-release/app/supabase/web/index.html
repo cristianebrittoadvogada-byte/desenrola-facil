@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4ed">
+  <meta name="description" content="Painel empresarial de homologação da Desenrola Fácil.">
+  <title>Desenrola Fácil — Homologação</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app-config.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">DF</div>
+    <div><p class="eyebrow">DESENROLA FÁCIL®</p><h1>Central da empresa</h1></div>
+    <span class="environment">HOMOLOGAÇÃO</span>
+  </header>
+  <main>
+    <section class="panel setup" id="setup">
+      <div class="section-heading"><div><p class="eyebrow">AMBIENTE CONECTADO</p><h2>Desenrola Fácil — Homologação</h2></div></div>
+      <p class="muted">Projeto <code>nmkneyzyxxhebkurgimh</code>. O painel usa uma chave pública, adequada para o navegador. Dados empresariais continuam protegidos por login, permissões e políticas RLS. O cadastro público permanece desativado.</p>
+    </section>
+
+    <section class="panel login" id="login">
+      <div class="section-heading"><div><p class="eyebrow">ACESSO RESTRITO</p><h2>Entrar na homologação</h2></div></div>
+      <form id="login-form" class="form-grid">
+        <label>E-mail<input id="email" type="email" autocomplete="username" required></label>
+        <label>Senha<input id="password" type="password" autocomplete="current-password" minlength="12" required></label>
+        <button type="submit">Entrar</button>
+      </form>
+      <button id="show-recovery" class="button-secondary" type="button">Esqueci minha senha</button>
+      <form id="recovery-request-form" class="form-grid" hidden>
+        <label>E-mail da conta<input id="recovery-email" type="email" autocomplete="email" required></label>
+        <button type="submit">Enviar link de recuperação</button>
+        <button id="cancel-recovery" class="button-secondary" type="button">Voltar ao login</button>
+        <p id="recovery-request-message" class="fine-print" role="status" aria-live="polite"></p>
+      </form>
+      <form id="recovery-update-form" class="form-grid" hidden>
+        <label>Nova senha<input id="recovery-password" type="password" autocomplete="new-password" minlength="12" required></label>
+        <label>Confirme a nova senha<input id="recovery-password-confirm" type="password" autocomplete="new-password" minlength="12" required></label>
+        <button type="submit">Salvar nova senha</button>
+        <p id="recovery-update-message" class="fine-print" role="status" aria-live="polite"></p>
+      </form>
+      <p class="fine-print">O cadastro público está desativado. O primeiro acesso exige convite do titular e provisionamento como proprietária.</p>
+    </section>
+
+    <section class="panel login" id="bootstrap-owner" hidden>
+      <div class="section-heading"><div><p class="eyebrow">PRIMEIRO ACESSO</p><h2>Ativar perfil administrativo</h2></div></div>
+      <p class="muted">Esta etapa só aparece após autenticação do e-mail empresarial confirmado e antes da criação da primeira proprietária. O sistema não aceita cadastro público.</p>
+      <form id="bootstrap-owner-form" class="form-grid">
+        <label>Nome da proprietária<input id="owner-full-name" maxlength="160" autocomplete="name" required></label>
+        <button type="submit">Ativar acesso administrativo</button>
+      </form>
+      <p id="bootstrap-owner-message" class="fine-print" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="workspace" hidden>
+      <div class="welcome">
+        <div><p class="eyebrow">GESTÃO OPERACIONAL</p><h2>Painel da empresa</h2><p id="session-label" class="muted"></p></div>
+        <button id="logout" class="button-secondary" type="button">Sair desta sessão</button>
+      </div>
+      <div id="notice" class="notice" role="status" aria-live="polite">Conectando...</div>
+      <div class="cards">
+        <article class="metric"><span>Contatos</span><strong id="contact-count">—</strong></article>
+        <article class="metric"><span>Ofertas ativas</span><strong id="product-count">—</strong></article>
+        <article class="metric"><span>Acesso atual</span><strong id="role-label">—</strong></article>
+      </div>
+      <nav class="module-nav" aria-label="Módulos da empresa">
+        <button type="button" data-view="dashboard" aria-current="page">Visão geral</button>
+        <button type="button" data-view="crm">CRM</button>
+        <button type="button" data-view="offers">Ofertas</button>
+        <button type="button" data-view="sales">Vendas</button>
+        <button type="button" data-view="contracts">Contratos</button>
+        <button type="button" data-view="finance">Financeiro</button>
+        <button type="button" data-view="agenda">Agenda</button>
+        <button type="button" data-view="experiences">Vivências e mentorias</button>
+        <button type="button" data-view="conversations">Atendimento</button>
+      </nav>
+
+      <section class="module-view" id="view-dashboard">
+        <article class="panel"><div class="section-heading"><div><p class="eyebrow">OPERAÇÃO</p><h3>Resumo de gestão</h3></div><button class="button-secondary" type="button" data-refresh>Atualizar</button></div>
+          <div class="dashboard-grid" id="dashboard-summary"></div>
+          <p class="fine-print">Dados carregados da API autenticada. Este ambiente deve conter somente dados fictícios.</p>
+        </article>
+      </section>
+
+      <section class="module-view" id="view-crm" hidden>
+        <div class="content-grid">
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">CRM</p><h3>Cadastro de lead</h3></div></div>
+            <form id="lead-form" class="form-grid">
+              <label>Nome<input id="lead-name" maxlength="160" required></label><label>E-mail<input id="lead-email" type="email" maxlength="320"></label>
+              <label>Telefone<input id="lead-phone" type="tel" maxlength="40"></label><button type="submit">Cadastrar lead</button>
+            </form>
+            <div class="table-wrap"><table><thead><tr><th>Contato</th><th>Origem</th><th>Etapa</th><th>Ação</th></tr></thead><tbody id="contacts"></tbody></table></div>
+          </article>
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">FUNIL</p><h3>Nova oportunidade</h3></div></div>
+            <form id="opportunity-form" class="form-grid"><label>Contato<select id="opportunity-contact" required></select></label><label>Oferta<select id="opportunity-product"></select></label><label>Próximo acompanhamento<input id="opportunity-followup" type="datetime-local"></label><button type="submit">Adicionar ao funil</button></form>
+            <div class="table-wrap"><table><thead><tr><th>Contato</th><th>Oferta</th><th>Etapa</th><th>Próximo contato</th><th>Ação</th></tr></thead><tbody id="opportunities"></tbody></table></div>
+          </article>
+        </div>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">ACOMPANHAMENTO</p><h3>Follow-ups vencidos</h3></div><button class="button-secondary" type="button" data-refresh>Atualizar fila</button></div><p class="muted">Fila interna ordenada pela data vencida. O painel não envia mensagens automaticamente; registre um novo horário após o contato da equipe.</p><div class="table-wrap"><table><thead><tr><th>Venceu em</th><th>Contato</th><th>Oferta</th><th>Etapa</th><th>Reagendar para</th><th>Ação</th></tr></thead><tbody id="followups"></tbody></table></div></article>
+      </section>
+
+      <section class="module-view" id="view-offers" hidden>
+        <div class="content-grid">
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">CATÁLOGO</p><h3>Ofertas cadastradas</h3></div></div><ul id="products" class="product-list"></ul></article>
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">ADMINISTRAÇÃO</p><h3>Cadastrar oferta</h3></div></div>
+            <form id="product-form" class="form-grid">
+              <input id="product-id" type="hidden">
+              <label>Código<input id="product-code" maxlength="80" required></label><label>Nome<input id="product-name" maxlength="160" required></label>
+              <label>Categoria<select id="product-category"><option value="mentoria">Mentoria</option><option value="livro">Livro</option><option value="constelacao">Constelação</option><option value="vivencia">Vivência</option><option value="outro">Outro</option></select></label>
+              <label>Modalidade<select id="product-mode"><option value="online">Online</option><option value="presencial">Presencial</option><option value="hibrido">Híbrido</option><option value="editorial">Editorial</option></select></label>
+              <label>Preço em R$<input id="product-price" type="number" min="0" step="0.01" required></label><label>Formato<input id="product-format" maxlength="160"></label>
+              <label>Duração<input id="product-duration" maxlength="120" placeholder="Ex.: três meses"></label><label>Meses de duração<input id="product-duration-months" type="number" min="1" max="120" step="1" inputmode="numeric"></label><label>Disponibilidade<select id="product-active"><option value="true">Ativa</option><option value="false">Encerrada</option></select></label><label>Descrição<input id="product-description" maxlength="2000"></label>
+              <button type="submit">Cadastrar oferta</button>
+            </form>
+          </article>
+        </div>
+      </section>
+
+      <section class="module-view" id="view-sales" hidden>
+        <div class="content-grid">
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">VENDAS</p><h3>Registrar venda pendente</h3></div></div>
+            <form id="sale-form" class="form-grid"><label>Contato<select id="sale-contact" required></select></label><label>Oferta<select id="sale-product" required></select></label><label>Pagamento<select id="sale-method"><option value="pix">PIX</option><option value="card">Cartão</option><option value="other">Outro / manual</option></select></label><label>Parcelas<input id="sale-installments" type="number" min="1" max="12" value="1"></label><button type="submit">Registrar sem confirmar pagamento</button></form>
+          </article>
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">CHECKOUT</p><h3>Asaas Sandbox</h3></div></div><p class="muted">O checkout só ficará disponível quando o Sandbox estiver configurado. CPF/CNPJ do pagador será enviado diretamente ao endpoint do Sandbox, não ficará salvo no CRM.</p><label>CPF/CNPJ fictício para teste<input id="checkout-tax-id" inputmode="numeric" autocomplete="off" maxlength="18"></label></article>
+        </div>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">HISTÓRICO</p><h3>Vendas</h3></div></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Contato</th><th>Oferta</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody id="sales"></tbody></table></div></article>
+      </section>
+
+      <section class="module-view" id="view-contracts" hidden>
+        <article class="panel"><div class="section-heading"><div><p class="eyebrow">CONTRATOS</p><h3>Rascunho vinculado a uma venda</h3></div></div>
+          <p class="muted">Registre somente o texto contratual aprovado pela empresa. O sistema não gera aconselhamento jurídico nem assinatura eletrônica. Marque envio ou assinatura somente após a ação ocorrer de fato.</p>
+          <form id="contract-form" class="form-grid">
+            <input id="contract-id" type="hidden">
+            <label>Venda<select id="contract-sale" required></select></label>
+            <label class="contract-text-field">Texto do contrato aprovado<textarea id="contract-text" rows="8" maxlength="20000" required></textarea></label>
+            <div class="row-actions"><button id="contract-submit" type="submit">Salvar rascunho</button><button id="contract-edit-cancel" class="button-secondary" type="button" hidden>Cancelar edição</button></div>
+          </form>
+        </article>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">REGISTROS</p><h3>Contratos e situação</h3></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Número</th><th>Venda</th><th>Status</th><th>Marcos</th><th>Texto</th><th>Ações</th></tr></thead><tbody id="contracts"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="module-view" id="view-finance" hidden>
+        <article class="panel"><div class="section-heading"><div><p class="eyebrow">FINANCEIRO</p><h3>Lançamento manual</h3></div></div>
+          <form id="finance-form" class="form-grid"><label>Tipo<select id="finance-type"><option value="expense">Despesa</option><option value="income">Receita avulsa</option></select></label><label>Descrição<input id="finance-description" maxlength="240" required></label><label>Valor em R$<input id="finance-amount" type="number" min="0" step="0.01" required></label><label>Vencimento<input id="finance-due" type="date"></label><label>Categoria<input id="finance-category" maxlength="80"></label><button type="submit">Registrar pendente</button></form>
+        </article>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">CAIXA</p><h3>Receitas e despesas</h3></div></div><div class="table-wrap"><table><thead><tr><th>Descrição</th><th>Tipo</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead><tbody id="finance-entries"></tbody></table></div></article>
+      </section>
+
+      <section class="module-view" id="view-agenda" hidden>
+        <article class="panel"><div class="section-heading"><div><p class="eyebrow">AGENDA</p><h3>Agendar atendimento</h3></div></div>
+          <form id="appointment-form" class="form-grid"><label>Contato<select id="appointment-contact"></select></label><label>Tipo<select id="appointment-type"><option value="mentoria">Mentoria</option><option value="constelacao">Constelação</option><option value="vivencia">Vivência</option><option value="reuniao">Reunião</option><option value="outro">Outro</option></select></label><label>Título<input id="appointment-title" maxlength="200" required></label><label>Início<input id="appointment-start" type="datetime-local" required></label><label>Fim<input id="appointment-end" type="datetime-local" required></label><label>Local / link<input id="appointment-location" maxlength="200"></label><button type="submit">Agendar</button></form>
+        </article>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">CALENDÁRIO</p><h3>Próximos horários</h3></div></div><div class="table-wrap"><table><thead><tr><th>Quando</th><th>Atividade</th><th>Contato</th><th>Status</th><th>Ação</th></tr></thead><tbody id="appointments"></tbody></table></div></article>
+      </section>
+
+      <section class="module-view" id="view-experiences" hidden>
+        <div class="content-grid">
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">VIVÊNCIAS</p><h3>Planejar experiência</h3></div></div>
+            <form id="experience-form" class="form-grid"><label>Código<input id="experience-code" maxlength="80" required></label><label>Nome<input id="experience-name" maxlength="200" required></label><label>Local<input id="experience-location" maxlength="200"></label><label>Início<input id="experience-start" type="datetime-local"></label><label>Fim<input id="experience-end" type="datetime-local"></label><label>Preço em R$<input id="experience-price" type="number" min="0" step="0.01"></label><label>Vagas<input id="experience-capacity" type="number" min="0"></label><button type="submit">Salvar como rascunho</button></form>
+          </article>
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">PROGRAMA</p><h3>Experiências cadastradas</h3></div></div><ul id="experiences" class="product-list"></ul></article>
+        </div>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">INSCRIÇÕES</p><h3>Participantes das vivências</h3></div></div>
+          <form id="registration-form" class="form-grid"><label>Vivência publicada<select id="registration-experience" required></select></label><label>Contato<select id="registration-contact" required></select></label><label>Venda relacionada (opcional)<select id="registration-sale"></select></label><button type="submit">Cadastrar participante</button></form>
+          <div class="table-wrap"><table><thead><tr><th>Vivência</th><th>Participante</th><th>Status</th><th>Inscrição</th><th>Ação</th></tr></thead><tbody id="registrations"></tbody></table></div>
+        </article>
+        <article class="panel table-panel"><div class="section-heading"><div><p class="eyebrow">MENTORIAS</p><h3>Acompanhamento de mentorados</h3></div></div><p class="muted">Ao registrar uma venda de uma oferta da categoria Mentoria, o sistema cria o vínculo pendente. A confirmação efetiva do pagamento ativa o acompanhamento e calcula o encerramento quando a duração em meses estiver cadastrada na oferta.</p><div class="table-wrap"><table><thead><tr><th>Participante</th><th>Início</th><th>Encerramento</th><th>Status</th><th>Ação</th></tr></thead><tbody id="mentorships"></tbody></table></div></article>
+      </section>
+
+      <section class="module-view" id="view-conversations" hidden>
+        <div class="content-grid">
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">ATENDIMENTO</p><h3>Conversas e transferências</h3></div></div><div class="table-wrap"><table><thead><tr><th>Canal</th><th>Contato</th><th>Estado</th><th>Ação</th></tr></thead><tbody id="threads"></tbody></table></div></article>
+          <article class="panel"><div class="section-heading"><div><p class="eyebrow">HISTÓRICO</p><h3>Mensagens recentes</h3></div></div><div class="table-wrap"><table><thead><tr><th>Quando</th><th>Contato</th><th>Tipo</th><th>Mensagem</th></tr></thead><tbody id="conversations"></tbody></table></div>
+            <form id="note-form" class="form-grid"><label>Contato<select id="note-contact" required></select></label><label>Anotação interna<input id="note-body" maxlength="4000" required></label><button type="submit">Registrar nota</button></form>
+          </article>
+        </div>
+      </section>
+      <p class="fine-print test-warning">Homologação. Utilize somente dados fictícios. WhatsApp, Instagram e Asaas permanecem desconectados até credenciais e configurações oficiais serem adicionadas.</p>
+    </section>
+  </main>
+  <footer><span>Desenrola Fácil® — painel de homologação</span><span>Dados de teste somente</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
