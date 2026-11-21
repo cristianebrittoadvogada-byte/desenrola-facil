@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+**/node_modules/
+app/supabase/work/
+app/supabase/backups/
+*.dfb
+*.dfb.tmp
+*.payload.tmp
+*.restore.tmp
+*.sql.private
+
