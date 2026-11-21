@@ -28,7 +28,7 @@ const initialData = () => ({
     city: 'Rio de Janeiro/RJ', currency: 'BRL'
   },
   products: [
-    { id: 'MENTORIA-DESENROLA-FACIL', name: 'Mentoria Desenrola Fácil', priceCents: 300000, currency: 'BRL', format: 'Individual e coletivo', modality: 'Online', duration: '3 meses', active: true, notes: 'Confirmar se o valor se aplica igualmente aos dois formatos.' },
+    { id: 'MENTORIA-DESENROLA-FACIL', name: 'Mentoria Desenrola Fácil', priceCents: 300000, currency: 'BRL', format: 'Individual e coletivo', modality: 'Híbrido', duration: '3 meses', active: true, notes: 'À vista ou em até três parcelas no cartão; juros da operadora a cargo da pessoa contratante.' },
     { id: 'LIVRO', name: 'Livro', priceCents: 6990, currency: 'BRL', format: 'Produto editorial', modality: 'Online e canais digitais', duration: 'Não se aplica', active: true, notes: 'Cadastrar título/edição, estoque ou formato digital, frete e entrega.' },
     { id: 'CONSTELACAO-ONLINE', name: 'Constelação Sistêmica Online', priceCents: 79999, currency: 'BRL', format: 'Atendimento individual', modality: 'Online', duration: 'Sessão; tempo a definir', active: true, notes: 'Definir duração e política de agendamento/cancelamento.' },
     { id: 'CONSTELACAO-PRESENCIAL', name: 'Constelação Sistêmica Presencial', priceCents: 99999, currency: 'BRL', format: 'Atendimento individual', modality: 'Presencial — Rio de Janeiro/RJ', duration: 'Sessão; tempo a definir', active: true, notes: 'Definir duração, local de atendimento e política de agendamento/cancelamento.' }
@@ -197,3 +197,4 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => console.log(`Desenrola Fácil local: http://${HOST}:${PORT}`));
+

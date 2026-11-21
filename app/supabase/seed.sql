@@ -3,7 +3,7 @@
 insert into public.products
   (id,code,name,category,description,price,currency,delivery_mode,format,duration_text,duration_months,active)
 values
-  ('10000000-0000-4000-8000-000000000001','mentoria-desenrola-facil','MENTORIA DESENROLA FÁCIL','mentoria','Metodologia PPDD®, integrando desenvolvimento comportamental, financeiro, relacional e sistêmico.',3000.00,'BRL','online','individual e coletivo','3 meses',3,true),
+  ('10000000-0000-4000-8000-000000000001','mentoria-desenrola-facil','MENTORIA DESENROLA FÁCIL','mentoria','Metodologia PPDD®, integrando desenvolvimento comportamental, financeiro, relacional e sistêmico.',3000.00,'BRL','hibrido','individual e coletivo','3 meses',3,true),
   ('10000000-0000-4000-8000-000000000002','livro-desenrola-facil','LIVRO','livro','Produto editorial vendido online e por canais digitais.',69.90,'BRL','editorial','produto editorial',null,null,true),
   ('10000000-0000-4000-8000-000000000003','constelacao-online','CONSTELAÇÃO SISTÊMICA ONLINE','constelacao','Atendimento individual online.',799.99,'BRL','online','individual','A definir',null,true),
   ('10000000-0000-4000-8000-000000000004','constelacao-presencial','CONSTELAÇÃO SISTÊMICA PRESENCIAL','constelacao','Atendimento individual no Rio de Janeiro/RJ.',999.99,'BRL','presencial','individual','A definir',null,true)
@@ -42,4 +42,5 @@ values ('60000000-0000-4000-8000-000000000001','reuniao','Evento demonstrativo d
   '2026-11-20 14:00:00-03','2026-11-20 14:30:00-03','scheduled','Online',
   'Registro fictício; remover ao encerrar os testes de homologação.')
 on conflict (id) do nothing;
+
 

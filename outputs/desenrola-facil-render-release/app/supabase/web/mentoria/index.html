@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111111">
-  <meta name="description" content="Conheça a Mentoria Desenrola Fácil: programa online de três meses com a metodologia PPDD®. Investimento de R$ 3.000.">
+  <meta name="description" content="Conheça a Mentoria Desenrola Fácil: três meses, formato híbrido, individual ou coletivo, com a metodologia PPDD®. Investimento de R$ 3.000.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Mentoria Desenrola Fácil® — três meses para suas escolhas">
-  <meta property="og:description" content="Acompanhamento online individual ou coletivo, com a metodologia PPDD®. Investimento de R$ 3.000.">
+  <meta property="og:description" content="Acompanhamento híbrido por três meses, individual ou coletivo, com a metodologia PPDD®. Investimento de R$ 3.000.">
   <title>Mentoria Desenrola Fácil®</title>
   <link rel="stylesheet" href="./styles.css">
+  <script src="./supabase-config.js"></script>
   <script type="module" src="./page.js"></script>
 </head>
 <body>
@@ -21,7 +22,7 @@
   <main>
     <section class="hero" id="inicio">
       <div class="hero-copy">
-        <p class="eyebrow">MENTORIA ONLINE · 3 MESES</p>
+        <p class="eyebrow">MENTORIA · 3 MESES</p>
         <h1>Um espaço para desenrolar suas escolhas com mais clareza.</h1>
         <p class="hero-intro">A Mentoria Desenrola Fácil® integra desenvolvimento comportamental, financeiro, relacional e sistêmico por meio da metodologia PPDD®.</p>
         <div class="hero-actions">
@@ -42,7 +43,7 @@
       <div class="section-label"><span>01</span><span>O PROGRAMA</span></div>
       <div class="section-content">
         <h2>Um caminho guiado, construído a partir da sua história.</h2>
-        <p>A mentoria oferece acompanhamento ao longo de três meses, em formato individual ou coletivo e modalidade online. O trabalho considera os diferentes aspectos da vida que a metodologia PPDD® integra.</p>
+        <p>A mentoria oferece acompanhamento ao longo de três meses, em formato híbrido e modalidades individual ou coletiva. O trabalho considera os diferentes aspectos da vida que a metodologia PPDD® integra.</p>
         <p>O formato, os encontros e os próximos passos são alinhados em conversa com a equipe para que você conheça a proposta antes de decidir.</p>
       </div>
     </section>
@@ -57,33 +58,34 @@
     <section class="section format-section">
       <div class="section-label"><span>02</span><span>FORMATO</span></div>
       <div class="section-content format-content">
-        <h2>Três meses de acompanhamento online.</h2>
+        <h2>Três meses de acompanhamento em formato híbrido.</h2>
         <div class="format-grid">
           <article><span class="format-number">01</span><h3>Individual</h3><p>Um espaço de acompanhamento individual.</p></article>
           <article><span class="format-number">02</span><h3>Coletivo</h3><p>Um espaço de desenvolvimento em grupo.</p></article>
         </div>
-        <p class="fine-print">A disponibilidade de cada formato e os detalhes de participação são confirmados pela equipe.</p>
+        <p class="fine-print">As opções individual e coletiva, a disponibilidade e os detalhes de participação são confirmados pela equipe.</p>
       </div>
     </section>
 
     <section class="investment" id="investimento">
-      <div class="investment-copy"><p class="eyebrow">INVESTIMENTO</p><h2>Mentoria Desenrola Fácil®</h2><p>Programa online · 3 meses · formato individual ou coletivo</p></div>
+      <div class="investment-copy"><p class="eyebrow">INVESTIMENTO</p><h2>Mentoria Desenrola Fácil®</h2><p>Formato híbrido · 3 meses · individual ou coletivo</p><p class="fine-print">À vista ou em até três parcelas no cartão; os juros da operadora ficam a cargo da pessoa contratante.</p></div>
       <div class="investment-price"><strong>R$ 3.000,00</strong><a class="button button-light" data-cta-location="investment" href="https://wa.me/5521967371083?text=Ol%C3%A1%2C%20quero%20conversar%20sobre%20a%20Mentoria%20Desenrola%20F%C3%A1cil%C2%AE." target="_blank" rel="noopener noreferrer">Tirar dúvidas no WhatsApp</a></div>
     </section>
 
     <section class="section interest-section" id="interesse">
       <div class="section-label"><span>03</span><span>PRÓXIMO PASSO</span></div>
       <div class="section-content interest-grid">
-        <div><h2>Quer saber se a mentoria combina com o que você procura?</h2><p>Conte um pouco sobre seu interesse. Vamos preparar uma mensagem para você revisar e enviar pelo WhatsApp.</p><p class="fine-print">Seus dados não são enviados por esta página. Eles só chegam à equipe se você abrir o WhatsApp e confirmar o envio da mensagem.</p></div>
+        <div><h2>Quer saber se a mentoria combina com o que você procura?</h2><p>Conte um pouco sobre seu interesse. Primeiro salvaremos seus dados de contato no CRM para que a equipe possa responder; depois você poderá revisar e enviar uma mensagem pelo WhatsApp.</p><p class="fine-print">O campo sobre seu objetivo não é gravado no CRM. Ele só aparece na mensagem do WhatsApp se você decidir abri-la e enviá-la. Não inclua informações sensíveis.</p></div>
         <form id="interest-form" class="interest-form">
           <label for="interest-name">Como podemos chamar você?</label><input id="interest-name" name="name" maxlength="160" autocomplete="name" required>
           <label for="interest-phone">WhatsApp para retorno</label><input id="interest-phone" name="phone" type="tel" inputmode="tel" maxlength="24" placeholder="(21) 99999-9999" autocomplete="tel" aria-describedby="phone-hint" required><span id="phone-hint" class="fine-print">Informe DDD e número com WhatsApp.</span>
           <label for="interest-email">E-mail <span>(opcional)</span></label><input id="interest-email" name="email" type="email" maxlength="320" autocomplete="email">
           <label for="interest-focus">O que gostaria de conversar?</label><select id="interest-focus" name="focus"><option value="prefiro conversar">Prefiro conversar</option><option value="desenvolvimento comportamental">Desenvolvimento comportamental</option><option value="vida financeira">Vida financeira</option><option value="relacionamentos">Relacionamentos</option><option value="aspectos sistêmicos">Aspectos sistêmicos</option><option value="formato e investimento">Formato e investimento</option></select>
           <label for="interest-goal">Principal dificuldade ou objetivo</label><textarea id="interest-goal" name="goal" rows="3" maxlength="600" placeholder="Compartilhe apenas o que se sentir confortável em enviar." required></textarea>
+          <label class="honeypot" aria-hidden="true" for="company-website">Não preencha este campo</label><input class="honeypot" id="company-website" name="company_website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
           <label class="consent"><input id="interest-consent" type="checkbox" required><span>Autorizo a equipe Desenrola Fácil a me contatar para responder a este pedido sobre a mentoria. Não autorizo mensagens de marketing.</span></label>
-          <p class="fine-print">Ao continuar, o WhatsApp abrirá a mensagem para revisão. Seus dados só serão compartilhados com o WhatsApp e a equipe se você confirmar o envio. Evite incluir informações sensíveis.</p>
-          <button class="button button-primary" data-cta-location="lead-form" id="prepare-message" type="button">Continuar no WhatsApp</button>
+          <p class="fine-print">Ao marcar o consentimento e continuar, nome, WhatsApp e e-mail opcional serão registrados no CRM para responder a este pedido. Isso não autoriza mensagens de marketing. O WhatsApp só abrirá depois do registro, e você decide se envia a mensagem.</p>
+          <button class="button button-primary" data-cta-location="lead-form" id="prepare-message" type="button">Salvar interesse e preparar WhatsApp</button>
           <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
           <a id="whatsapp-continue" class="button button-whatsapp" data-cta-location="lead-form" href="#" target="_blank" rel="noopener noreferrer" hidden>Revisar e enviar mensagem</a>
         </form>
@@ -92,6 +94,7 @@
     </section>
   </main>
 
-  <footer class="site-footer"><a class="brand" href="#inicio"><span class="brand-mark">DF</span><span>DESENROLA FÁCIL<sup>®</sup></span></a><span>Mentoria online · Brasil</span></footer>
+  <footer class="site-footer"><a class="brand" href="#inicio"><span class="brand-mark">DF</span><span>DESENROLA FÁCIL<sup>®</sup></span></a><span>Mentoria · Brasil</span></footer>
 </body>
 </html>
+

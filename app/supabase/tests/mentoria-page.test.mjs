@@ -18,16 +18,18 @@ test("formulário prepara mensagem explícita para o WhatsApp comercial", () => 
   assert.match(url.searchParams.get("text"), /Consentimento para retorno sobre a mentoria: SIM\./);
 });
 
-test("formulário não envia dados sem clique explícito da pessoa", async () => {
+test("formulário registra primeiro o lead no CRM e só depois prepara o WhatsApp", async () => {
   const [html, script] = await Promise.all([readPage("../web/mentoria/index.html"), readPage("../web/mentoria/page.js")]);
-  assert.match(html, /Seus dados não são enviados por esta página/);
+  assert.match(html, /registrados no CRM/);
+  assert.match(html, /campo sobre seu objetivo não é gravado no CRM/);
   assert.match(html, /interest-consent/);
   assert.match(html, /interest-phone/);
   assert.match(html, /interest-goal/);
   assert.match(html, /whatsapp-continue/);
   assert.match(html, /id="prepare-message" type="button"/);
-  assert.doesNotMatch(script, /fetch\(|XMLHttpRequest|sendBeacon/);
-  assert.match(script, /lead_form_prepared/);
+  assert.match(script, /fetch\(/);
+  assert.match(script, /lead_saved_to_crm/);
+  assert.match(script, /functions\/v1\/lead-intake/);
   assert.match(script, /whatsapp_cta_clicked/);
   assert.match(script, /lead_whatsapp_clicked/);
   assert.match(script, /cta_location/);
@@ -42,6 +44,8 @@ test("página mantém WhatsApp correto, consentimento e layout responsivo", asyn
   assert.ok(links.length >= 2);
   for (const link of links) assert.equal(link.pathname, `/${BUSINESS_WHATSAPP_NUMBER}`);
   assert.match(html, /metodologia PPDD/i);
+  assert.match(html, /formato híbrido/i);
+  assert.match(html, /três parcelas no cartão/);
   assert.match(html, /Autorizo a equipe Desenrola Fácil/);
   assert.match(html, /interest-phone[^>]+type="tel"[^>]+inputmode="tel"/);
   assert.match(css, /@media\(max-width:520px\)/);
@@ -60,3 +64,4 @@ test("mensagem exige nome e limita campos inseridos no WhatsApp", () => {
   assert.ok(text.includes("A".repeat(160)));
   assert.ok(text.length < 1200);
 });
+

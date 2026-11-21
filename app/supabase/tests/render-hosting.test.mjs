@@ -21,7 +21,7 @@ test("Blueprint separa a página comercial e o painel como sites estáticos sem 
 });
 
 test("pacote privado contém só a página e o Blueprint, sincronizados com a fonte", async () => {
-  const filenames = ["index.html", "styles.css", "page.js", "lead-whatsapp.mjs"];
+  const filenames = ["index.html", "styles.css", "page.js", "lead-whatsapp.mjs", "supabase-config.js"];
   for (const filename of filenames) {
     const [source, packaged] = await Promise.all([
       readFile(new URL(`../web/mentoria/${filename}`, import.meta.url)),
@@ -42,6 +42,7 @@ test("pacote privado de publicação contém página e painel separados, sem cre
     "app/supabase/web/app-config.js", "app/supabase/web/_headers",
     "app/supabase/web/mentoria/index.html", "app/supabase/web/mentoria/styles.css",
     "app/supabase/web/mentoria/page.js", "app/supabase/web/mentoria/lead-whatsapp.mjs",
+    "app/supabase/web/mentoria/supabase-config.js",
   ];
   for (const file of files) {
     const [source, packaged] = await Promise.all([
@@ -51,8 +52,13 @@ test("pacote privado de publicação contém página e painel separados, sem cre
     assert.deepEqual(packaged, source, `${file} precisa corresponder à fonte`);
   }
   const config = await readFile(new URL(`${completeReleaseRoot}app/supabase/web/app-config.js`, import.meta.url), "utf8");
+  const salesConfig = await readFile(new URL(`${completeReleaseRoot}app/supabase/web/mentoria/supabase-config.js`, import.meta.url), "utf8");
   assert.match(config, /sb_publishable_/);
   assert.doesNotMatch(config, /service_role|sb_secret_|asaas|meta_app_secret/i);
+  assert.match(salesConfig, /sb_publishable_/);
+  assert.doesNotMatch(salesConfig, /service_role|sb_secret_|asaas|meta_app_secret/i);
+  assert.match(salesConfig, /nmkneyzyxxhebkurgimh\.supabase\.co/);
   assert.match(packagedBlueprint, /name:\s*desenrola-facil-mentoria/);
   assert.match(packagedBlueprint, /name:\s*desenrola-facil-painel/);
 });
+

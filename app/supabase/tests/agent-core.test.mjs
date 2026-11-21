@@ -4,7 +4,7 @@ import { canSendAutomatedMessage, decideSalesReply, messageFingerprintParts, nex
 import { buildInterestWhatsAppUrl } from "../web/mentoria/lead-whatsapp.mjs";
 
 const offers = [
-  { code: "mentoria-desenrola-facil", name: "MENTORIA DESENROLA FÁCIL", category: "mentoria", price: 3000, currency: "BRL", format: "individual e coletivo", duration_text: "3 meses", delivery_mode: "online" },
+  { code: "mentoria-desenrola-facil", name: "MENTORIA DESENROLA FÁCIL", category: "mentoria", price: 3000, currency: "BRL", format: "individual e coletivo", duration_text: "3 meses", delivery_mode: "hibrido" },
   { code: "livro-desenrola-facil", name: "LIVRO", category: "livro", price: 69.9, currency: "BRL", format: "produto editorial", delivery_mode: "editorial" },
 ];
 
@@ -66,3 +66,4 @@ test("follow-up vencido é reagendado; data futura continua respeitada", () => {
   assert.equal(nextFollowUpAt("2026-11-22T12:00:00.000Z", now), "2026-11-22T12:00:00.000Z");
   assert.equal(nextFollowUpAt(null, now), "2026-11-21T11:00:00.000Z");
 });
+

@@ -5,8 +5,10 @@
 	"scripts": {
 		"test": "node --test tests/*.test.mjs",
 		"test:local-panel": "node --test ..\\test\\smoke.mjs",
+		"test:lead-intake": "node --test tests/lead-intake.test.mjs tests/mentoria-page.test.mjs",
 		"check:web": "node --check web/app.js && node --check web/mentoria/page.js && node --check web/mentoria/lead-whatsapp.mjs",
 		"deploy:preflight": "powershell -NoProfile -File scripts/deploy-staging.ps1",
 		"deploy:staging": "powershell -NoProfile -File scripts/deploy-staging.ps1 -Apply"
 	}
 }
+

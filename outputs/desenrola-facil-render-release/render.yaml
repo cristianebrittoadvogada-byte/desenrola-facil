@@ -21,7 +21,7 @@ services:
         value: camera=(), microphone=(), geolocation=()
       - path: /*
         name: Content-Security-Policy
-        value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+        value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://nmkneyzyxxhebkurgimh.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
   - type: web
     name: desenrola-facil-painel
     runtime: static
@@ -44,3 +44,4 @@ services:
       - path: /*
         name: Content-Security-Policy
         value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://nmkneyzyxxhebkurgimh.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self' https://nmkneyzyxxhebkurgimh.supabase.co"
+
