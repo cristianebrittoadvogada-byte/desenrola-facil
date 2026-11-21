@@ -62,11 +62,21 @@ A CLI oficial Supabase 3.2.0 está instalada como dependência local, mas sem se
 
 ## Próximas etapas operacionais
 
-1. Confirmar o workspace Render `My Workspace`, criar um repositório GitHub privado e autorizar Render a acessá-lo.
-2. Convidar `desenrolafaciljud@gmail.com` no Auth do Supabase; depois da URL Render, permitir esse redirect no projeto e testar login/API.
-3. Inserir credenciais oficiais Meta e Asaas Sandbox em Secrets do Supabase; testar webhooks e checkout fictício.
-4. Fazer exportação cifrada e restauração isolada com sessão CLI/credencial PostgreSQL segura; não usar dados reais até validar recuperação.
-5. Não executar `db push` até validar os timestamps históricos remotos; não editar a tabela interna manualmente.
+1. Autorizar o app GitHub do Render a ler somente o repositório privado e adicionar a credencial de implantação GitHub ao Render; depois criar Blueprint e publicar os dois sites em `My Workspace`.
+2. Após obter a URL real do painel, permitir o redirect no Auth do Supabase, convidar `desenrolafaciljud@gmail.com` e testar login/API com a proprietária.
+3. Conectar as contas oficiais Meta/Instagram/WhatsApp e cadastrar segredos dos webhooks no Supabase; validar o canal real sem mensagens não consentidas.
+4. Conectar Asaas Sandbox e guardar as credenciais em Secrets; testar checkout e webhook com dados fictícios, sem cobranças reais.
+5. Fazer exportação cifrada e restauração isolada; não usar dados reais até validar recuperação. Não executar `db push` até alinhar os timestamps MCP/CLI.
+
+## Diretriz permanente de continuidade — 21/11/2026
+
+- Preservar o projeto, o painel local e as integrações existentes; avançar a partir do estado atual sem duplicar estruturas nem refazer testes aprovados sem motivo.
+- Priorizar receita enquanto a plataforma continua: aquisição → WhatsApp oficial → qualificação → oferta → contratação → pagamento confirmado → entrega; registrar origem, etapa e conversão sem inventar clientes, vendas ou pagamentos.
+- Integrar conteúdo e atendimento do Instagram/WhatsApp somente com APIs oficiais, consentimento e permissões da titular. A página comercial não simula gravação de leads no CRM: isso só ocorre pelo webhook oficial após a pessoa enviar a mensagem.
+- Preservar ofertas aprovadas: Mentoria R$ 3.000/3 meses, formato individual e coletivo conforme a nova diretriz híbrida; Constelação online R$ 799,99; presencial R$ 999,99 no Rio de Janeiro; livro físico sem apresentá-lo como ebook; não inventar preço, data ou disponibilidade de vivências.
+- Buscar 20 mentorias/mês como meta, não garantia; medir origem, leads, conversão, vendas, receita, ticket médio e desempenho dos canais.
+- Manter CRM, vendas, contratos, financeiro, produtos, mentorias, vivências, agenda, atendimento, indicadores, segurança e recuperação integrados. Teto recorrente de R$ 100/mês; sem contratação/upgrade sem autorização; dados fictícios em testes.
+- Em cada entrega, distinguir desenvolvido, testado, implantado, publicado, conectado e validado em operação real.
 
 Ver [REGISTRO-FASE-1.md](./REGISTRO-FASE-1.md) para o relatório desta execução e [FASE-2-INTEGRACOES.md](./FASE-2-INTEGRACOES.md) para dependências e implantação dos canais.
 
