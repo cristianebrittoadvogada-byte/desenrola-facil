@@ -187,10 +187,11 @@
         <article class="panel">
           <div class="section-heading"><div><p class="eyebrow">META · INSTAGRAM</p><h3>Conexão oficial</h3></div><button id="meta-status-refresh" class="button-secondary" type="button">Verificar conexão</button></div>
           <p id="meta-instagram-status" class="notice" role="status" aria-live="polite">Verificando integração...</p>
-          <p class="muted">O OAuth usa Instagram Login, solicita somente as permissões configuradas para perfil, publicação, mensagens e comentários, e valida que a conta autorizada é @cristianebritto.desenrola.</p>
+          <p class="muted">O OAuth usa o Login Unificado oficial da Meta para apps novos, solicita perfil, publicação, mensagens e comentários, sem permissões de anúncios, e valida que a conta autorizada é @cristianebritto.desenrola.</p>
           <form id="meta-app-form" class="form-grid">
-            <label>Instagram App ID<input id="meta-app-id" inputmode="numeric" autocomplete="off" maxlength="32" required></label>
-            <label>Instagram App Secret<input id="meta-app-secret" type="password" autocomplete="new-password" maxlength="512" required></label>
+            <label>Meta App ID<input id="meta-app-id" inputmode="numeric" autocomplete="off" maxlength="32" required></label>
+            <label>Config ID do Login Unificado<input id="meta-config-id" inputmode="numeric" autocomplete="off" maxlength="32" required></label>
+            <label>Meta App Secret<input id="meta-app-secret" type="password" autocomplete="new-password" maxlength="512" required></label>
             <button type="submit">Guardar credenciais na Meta Vault</button>
           </form>
           <p class="fine-print">O App Secret é enviado por HTTPS ao backend Supabase e guardado no Vault criptografado. Ele não é salvo pelo navegador nem exibido após o envio.</p>
@@ -227,3 +228,4 @@
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
+
