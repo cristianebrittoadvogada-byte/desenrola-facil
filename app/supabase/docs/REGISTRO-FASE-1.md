@@ -9,7 +9,7 @@ Atualizado em 21/11/2026. O painel local `app/server.mjs` e os arquivos locais e
 - Verificação remota da RPC: existe; `anon` e `authenticated` não podem executá-la; `service_role` pode. O teste remoto com UUID e e-mail fictícios foi recusado e a contagem continuou em zero proprietários.
 - A suíte completa final foi executada uma vez depois das alterações: **69 aprovados, 0 falhas**. Testes focados do onboarding: **5/5**; checkout Sandbox/CORS: **8/8**; pacote Render: **3/3**; sintaxe dos módulos web passou.
 - Meta/Asaas ainda não estão conectados: as funções fecham com indisponibilidade sem os segredos. Nenhuma cobrança ou mensagem externa foi enviada.
-- GitHub informa sessão autenticada, porém nenhum repositório disponível e não há ferramenta de criação de repositório. O workspace Render `My Workspace` foi usado explicitamente na consulta e não tem serviços existentes. A página e o painel ainda não foram publicados e não há URL pública.
+- O repositório privado `cristianebrittoadvogada-byte/desenrola-facil` foi confirmado e recebeu o projeto local na branch `main`, commit `583f8d4` (87 arquivos; painel original preservado; diretórios temporários e dependências locais excluídos). O Blueprint foi conferido no pacote e no remoto. Em `My Workspace`, a lista segue vazia; `render_create_blueprint` retornou HTTP 400 por falta de acesso do Render ao repo/branch/Blueprint. Nenhum serviço foi criado e não há URL pública. A conexão de GitHub do Codex não concede automaticamente acesso de implantação ao Render.
 - Não há usuário Supabase Auth; por isso, login, recuperação real e autorização de módulos ainda aguardam o convite e a confirmação da proprietária. O Auth remoto ainda precisa permitir o redirect da URL pública final.
 
 Nenhum serviço foi contratado, nenhuma integração paga foi habilitada e nenhuma credencial foi lida ou exibida.
@@ -53,7 +53,7 @@ Nenhum serviço foi contratado, nenhuma integração paga foi habilitada e nenhu
 - O catálogo remoto contém as quatro ofertas oficiais informadas pela empresa, com preços e duração correspondentes.
 - API Edge `api` implantada no projeto (versão 2, `ACTIVE`, `verify_jwt=true`); CORS inclui a URL prevista do painel Render. A implantação foi aceita pela plataforma; uma chamada HTTP autenticada não foi possível neste ambiente, e nenhum usuário Auth foi criado.
 - O painel web está fixado no projeto homologado, com chave publicável, login por e-mail/senha, cadastro público removido e JWT em memória. Nenhuma chave service_role está no cliente.
-- O Blueprint Render foi ampliado para publicar painel e página em sites estáticos separados. Ele ainda não foi criado no Render nem implantado.
+- O Blueprint Render publica painel e página em sites estáticos separados e gratuitos. A criação foi tentada no workspace correto, mas o Render não acessa o repositório privado; o Blueprint não foi criado e nenhum deploy ocorreu.
 - Não há dados fictícios persistentes de cliente. Os únicos registros de negócio são as quatro ofertas seed e os registros de auditoria de migração.
 
 ## O que ainda não foi comprovado
@@ -85,3 +85,4 @@ Nenhum segredo foi extraído ou exibido. Nenhum serviço foi contratado e não h
 **A fundação PostgreSQL e a API autenticada foram implantadas e tiveram validação remota parcial. A Fase 1 ainda não está concluída:** falta backup/restauração real, login positivo e publicação da interface. A Fase 2 segue com handlers oficiais preparados/testados localmente, mas Meta/Asaas ainda não estão conectados a contas reais ou Sandbox. O painel local continua intacto.
 
 Consulta de contagem encontrou zero usuários em `auth.users`. O conector Supabase disponível não oferece a operação Auth Admin para convite; o titular precisa criar/invitar o primeiro usuário pelo fluxo oficial. Depois disso, a função existente `provision_company_user` poderá conceder o papel `owner` sem compartilhar senha no chat.
+
