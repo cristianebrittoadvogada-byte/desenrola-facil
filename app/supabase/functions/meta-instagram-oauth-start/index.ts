@@ -49,7 +49,10 @@ Deno.serve(async (request: Request) => {
     .select("public_config,secret_reference,status").eq("provider", "instagram_graph").maybeSingle();
   if (settingsError) return json({ error: "integration_settings_unavailable" }, 503, origin);
   const appId = String(settings?.public_config?.app_id ?? "");
-  if (!/^\d{5,32}$/.test(appId) || !settings?.secret_reference) return json({ error: "meta_app_setup_required" }, 409, origin);
+  const configId = String(settings?.public_config?.config_id ?? "");
+  if (!/^\d{5,32}$/.test(appId) || !/^\d{8,32}$/.test(configId) || !settings?.secret_reference) {
+    return json({ error: "meta_app_setup_required" }, 409, origin);
+  }
 
   const stateBytes = crypto.getRandomValues(new Uint8Array(32));
   const state = stateValue(stateBytes);
@@ -63,9 +66,10 @@ Deno.serve(async (request: Request) => {
   const callbackUrl = `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-instagram-oauth-callback`;
   let authorizationUrl: string;
   try {
-    authorizationUrl = buildInstagramAuthorizationUrl({ appId, redirectUri: callbackUrl, state });
+    authorizationUrl = buildInstagramAuthorizationUrl({ appId, configId, redirectUri: callbackUrl, state });
   } catch {
     return json({ error: "oauth_configuration_invalid" }, 503, origin);
   }
-  return json({ authorization_url: authorizationUrl, callback_url: callbackUrl, state_expires_in: 600 }, 200, origin);
+  return json({ authorization_url: authorizationUrl, callback_url: callbackUrl, config_id: configId, state_expires_in: 600 }, 200, origin);
 });
+

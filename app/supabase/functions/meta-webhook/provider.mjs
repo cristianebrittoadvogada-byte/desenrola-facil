@@ -19,7 +19,7 @@ export async function sendMetaTextMessage({ channel, recipientId, text, env, fet
     token = env.INSTAGRAM_ACCESS_TOKEN;
     if (!/^\d+$/.test(instagramAccountId)) return { ok: false, code: "instagram_account_not_configured" };
     if (new TextEncoder().encode(text).byteLength > 1000) return { ok: false, code: "instagram_message_too_long" };
-    url = `https://graph.instagram.com/${version}/${instagramAccountId}/messages`;
+    url = `https://graph.facebook.com/${version}/${instagramAccountId}/messages`;
     body = { recipient: { id: recipientId }, message: { text: text.trim() } };
   } else {
     return { ok: false, code: "unsupported_channel" };
@@ -42,3 +42,4 @@ export async function sendMetaTextMessage({ channel, recipientId, text, env, fet
     return { ok: false, code: "provider_unreachable" };
   }
 }
+

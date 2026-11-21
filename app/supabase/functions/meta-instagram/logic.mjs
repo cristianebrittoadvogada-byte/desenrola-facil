@@ -1,23 +1,26 @@
 export const INSTAGRAM_OAUTH_SCOPES = Object.freeze([
-  "instagram_business_basic",
-  "instagram_business_content_publish",
-  "instagram_business_manage_messages",
-  "instagram_business_manage_comments",
+  "instagram_basic",
+  "instagram_content_publish",
+  "instagram_manage_messages",
+  "instagram_manage_comments",
 ]);
 
 const VERSION_PATTERN = /^v\d+\.\d+$/;
 const ACCOUNT_USERNAME = "cristianebritto.desenrola";
 
-export function buildInstagramAuthorizationUrl({ appId, redirectUri, state, scopes = INSTAGRAM_OAUTH_SCOPES }) {
-  if (!/^\d{5,32}$/.test(String(appId ?? ""))) throw new Error("invalid_meta_app_id");
+export function buildInstagramAuthorizationUrl({ appId, configId, redirectUri, state, graphVersion = "v27.0" }) {
+  if (!/^\d{5,32}$/.test(String(appId ?? "")) || !/^\d{8,32}$/.test(String(configId ?? "")) || !VERSION_PATTERN.test(graphVersion)) {
+    throw new Error("invalid_meta_app_configuration");
+  }
   if (!isHttpsUrl(redirectUri) || !state || state.length < 32 || state.length > 256) throw new Error("invalid_oauth_request");
-  const url = new URL("https://www.instagram.com/oauth/authorize");
+  const url = new URL(`https://www.facebook.com/${graphVersion}/dialog/oauth`);
   url.searchParams.set("client_id", String(appId));
+  url.searchParams.set("config_id", String(configId));
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("response_type", "code");
-  url.searchParams.set("scope", scopes.join(","));
+  url.searchParams.set("display", "popup");
+  url.searchParams.set("prompt", "login");
   url.searchParams.set("state", state);
-  url.searchParams.set("enable_fb_login", "false");
   return url.toString();
 }
 
@@ -61,18 +64,48 @@ async function checkedJson(response, failureCode) {
   return payload;
 }
 
-export async function exchangeInstagramCode({ appId, appSecret, redirectUri, code, fetchImpl = fetch }) {
-  if (!/^\d{5,32}$/.test(String(appId ?? "")) || !appSecret || !code || !isHttpsUrl(redirectUri)) {
+export async function exchangeInstagramCode({ appId, appSecret, code, graphVersion = "v27.0", fetchImpl = fetch }) {
+  if (!/^\d{5,32}$/.test(String(appId ?? "")) || !appSecret || !code || !VERSION_PATTERN.test(graphVersion)) {
     throw new Error("invalid_oauth_exchange");
   }
-  const form = new FormData();
-  form.set("client_id", appId);
-  form.set("client_secret", appSecret);
-  form.set("grant_type", "authorization_code");
-  form.set("redirect_uri", redirectUri);
-  form.set("code", code.replace(/#_$/, ""));
-  const response = await fetchImpl("https://api.instagram.com/oauth/access_token", { method: "POST", body: form });
+  const url = new URL(`https://graph.facebook.com/${graphVersion}/oauth/access_token`);
+  url.searchParams.set("client_id", appId);
+  url.searchParams.set("client_secret", appSecret);
+  url.searchParams.set("code", code.replace(/#_$/, ""));
+  const response = await fetchImpl(url, { headers: { Accept: "application/json" } });
   return tokenFromPayload(await checkedJson(response, "meta_code_exchange_failed"));
+}
+
+export async function getInstagramClientBusinessId({ accessToken, graphVersion = "v27.0", fetchImpl = fetch }) {
+  if (!/^v\d+\.\d+$/.test(graphVersion) || typeof accessToken !== "string" || accessToken.length < 20) {
+    throw new Error("invalid_meta_access_token");
+  }
+  const url = new URL(`https://graph.facebook.com/${graphVersion}/me`);
+  url.searchParams.set("fields", "id,client_business_id");
+  const response = await fetchImpl(url, { headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" } });
+  const data = await checkedJson(response, "meta_business_identity_lookup_failed");
+  const businessId = String(data.client_business_id ?? "");
+  if (!/^\d{5,32}$/.test(businessId)) throw new Error("meta_business_identity_unavailable");
+  return { appScopedUserId: String(data.id ?? ""), clientBusinessId: businessId };
+}
+
+export async function getAssignedInstagramAccounts({ accessToken, graphVersion = "v27.0", fetchImpl = fetch }) {
+  if (!/^v\d+\.\d+$/.test(graphVersion) || typeof accessToken !== "string" || accessToken.length < 20) {
+    throw new Error("invalid_meta_access_token");
+  }
+  const url = new URL(`https://graph.facebook.com/${graphVersion}/me/assigned_instagram_accounts`);
+  url.searchParams.set("fields", "id,username");
+  const response = await fetchImpl(url, { headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" } });
+  const data = await checkedJson(response, "meta_instagram_assets_lookup_failed");
+  if (!Array.isArray(data.data)) throw new Error("meta_instagram_assets_lookup_failed");
+  const accounts = data.data.map((row) => ({
+    id: String(row?.id ?? ""),
+    username: String(row?.username ?? "").replace(/^@/, "").toLowerCase(),
+  }));
+  if (accounts.some((account) => !/^\d{5,32}$/.test(account.id) || !/^[a-z0-9._]{1,30}$/.test(account.username))) {
+    throw new Error("meta_instagram_identity_unavailable");
+  }
+  return accounts;
 }
 
 export async function exchangeMetaBusinessCode({ appId, appSecret, redirectUri, code, graphVersion = "v27.0", fetchImpl = fetch }) {
@@ -152,9 +185,27 @@ export async function refreshLongLivedToken({ accessToken, fetchImpl = fetch }) 
   return { accessToken: token.access_token, expiresIn };
 }
 
-export async function getInstagramIdentity({ accessToken, graphVersion = "v27.0", fetchImpl = fetch }) {
+export async function refreshUnifiedLoginToken({ appId, appSecret, accessToken, graphVersion = "v27.0", fetchImpl = fetch }) {
+  if (!/^\d{5,32}$/.test(String(appId ?? "")) || !appSecret || typeof accessToken !== "string" || accessToken.length < 20 || !VERSION_PATTERN.test(graphVersion)) {
+    throw new Error("invalid_meta_token_refresh");
+  }
+  const url = new URL(`https://graph.facebook.com/${graphVersion}/oauth/access_token`);
+  url.searchParams.set("grant_type", "fb_exchange_token");
+  url.searchParams.set("client_id", String(appId));
+  url.searchParams.set("client_secret", appSecret);
+  url.searchParams.set("fb_exchange_token", accessToken);
+  url.searchParams.set("set_token_expires_in_60_days", "true");
+  const response = await fetchImpl(url, { headers: { Accept: "application/json" } });
+  const token = tokenFromPayload(await checkedJson(response, "meta_token_refresh_failed"));
+  const expiresIn = Number(token.expires_in);
+  if (!Number.isFinite(expiresIn) || expiresIn < 86400) throw new Error("meta_expiry_unavailable");
+  return { accessToken: token.access_token, expiresIn };
+}
+
+export async function getInstagramIdentity({ accountId, accessToken, graphVersion = "v27.0", fetchImpl = fetch }) {
   if (!VERSION_PATTERN.test(graphVersion)) throw new Error("invalid_graph_version");
-  const url = new URL(`https://graph.instagram.com/${graphVersion}/me`);
+  if (!/^\d{5,32}$/.test(String(accountId ?? ""))) throw new Error("invalid_instagram_account_id");
+  const url = new URL(`https://graph.facebook.com/${graphVersion}/${accountId}`);
   url.searchParams.set("fields", "id,username");
   const response = await fetchImpl(url, { headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" } });
   const data = await checkedJson(response, "meta_identity_lookup_failed");
@@ -181,7 +232,7 @@ export async function publishInstagramImage({ accountId, accessToken, imageUrl, 
   if (!/^\d{5,32}$/.test(String(accountId ?? "")) || !VERSION_PATTERN.test(graphVersion)) throw new Error("invalid_instagram_publication_target");
   const validated = validateInstagramImagePublication({ image_url: imageUrl, caption });
   const headers = { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json", Accept: "application/json" };
-  const containerResponse = await fetchImpl(`https://graph.instagram.com/${graphVersion}/${accountId}/media`, {
+  const containerResponse = await fetchImpl(`https://graph.facebook.com/${graphVersion}/${accountId}/media`, {
     method: "POST", headers, body: JSON.stringify({ image_url: validated.imageUrl, caption: validated.caption }),
   });
   const container = await checkedJson(containerResponse, "meta_media_container_failed");
@@ -189,7 +240,7 @@ export async function publishInstagramImage({ accountId, accessToken, imageUrl, 
 
   let ready = false;
   for (let attempt = 0; attempt < 10; attempt += 1) {
-    const statusUrl = new URL(`https://graph.instagram.com/${graphVersion}/${container.id}`);
+    const statusUrl = new URL(`https://graph.facebook.com/${graphVersion}/${container.id}`);
     statusUrl.searchParams.set("fields", "status_code");
     const statusResponse = await fetchImpl(statusUrl, { headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" } });
     const status = await checkedJson(statusResponse, "meta_media_status_failed");
@@ -199,7 +250,7 @@ export async function publishInstagramImage({ accountId, accessToken, imageUrl, 
   }
   if (!ready) throw new Error("meta_media_processing_timeout");
 
-  const publishResponse = await fetchImpl(`https://graph.instagram.com/${graphVersion}/${accountId}/media_publish`, {
+  const publishResponse = await fetchImpl(`https://graph.facebook.com/${graphVersion}/${accountId}/media_publish`, {
     method: "POST", headers, body: JSON.stringify({ creation_id: container.id }),
   });
   const published = await checkedJson(publishResponse, "meta_publish_failed");
@@ -207,6 +258,7 @@ export async function publishInstagramImage({ accountId, accessToken, imageUrl, 
   return { mediaId: published.id, containerId: container.id };
 }
 
-export function instagramOAuthConfiguration({ appId, callbackUrl }) {
-  return { appId: String(appId ?? ""), callbackUrl, expectedUsername: ACCOUNT_USERNAME, scopes: [...INSTAGRAM_OAUTH_SCOPES] };
+export function instagramOAuthConfiguration({ appId, configId, callbackUrl }) {
+  return { appId: String(appId ?? ""), configId: String(configId ?? ""), callbackUrl, expectedUsername: ACCOUNT_USERNAME, scopes: [...INSTAGRAM_OAUTH_SCOPES] };
 }
+

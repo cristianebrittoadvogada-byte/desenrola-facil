@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { getInstagramIdentity, isExpectedInstagramAccount, publishInstagramImage, refreshLongLivedToken, validateInstagramImagePublication } from "../meta-instagram/logic.mjs";
+import { getInstagramIdentity, isExpectedInstagramAccount, publishInstagramImage, refreshUnifiedLoginToken, validateInstagramImagePublication } from "../meta-instagram/logic.mjs";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
@@ -85,9 +85,10 @@ async function ensureUsableCredentials(admin: ReturnType<typeof createClient>, u
   if (!secretId) throw new Error("instagram_not_connected");
   const secret = await readSecret(admin, secretId);
   let accessToken = String(secret.access_token ?? "");
-  const expiresAt = Date.parse(String(secret.token_expires_at ?? ""));
+  const expiryValue = String(secret.token_expires_at ?? "");
+  let expiresAt = expiryValue ? Date.parse(expiryValue) : Number.POSITIVE_INFINITY;
   const obtainedAt = Date.parse(String(secret.token_obtained_at ?? ""));
-  if (accessToken.length < 20 || !Number.isFinite(expiresAt)) throw new Error("instagram_not_connected");
+  if (secret.auth_flow !== "instagram_unified_login" || accessToken.length < 20 || Number.isNaN(expiresAt)) throw new Error("instagram_not_connected");
   if (expiresAt <= Date.now()) throw new Error("instagram_reconnect_required");
 
   const timeRemaining = expiresAt - Date.now();
@@ -96,7 +97,9 @@ async function ensureUsableCredentials(admin: ReturnType<typeof createClient>, u
   if (timeRemaining <= refreshWindow) {
     if (Number.isFinite(obtainedAt) && Date.now() - obtainedAt >= 24 * 60 * 60 * 1000) {
       try {
-        const refreshed = await refreshLongLivedToken({ accessToken });
+        const refreshed = await refreshUnifiedLoginToken({
+          appId: String(secret.app_id ?? ""), appSecret: String(secret.app_secret ?? ""), accessToken, graphVersion: GRAPH_VERSION,
+        });
         const nextSecret = {
           ...secret,
           access_token: refreshed.accessToken,
@@ -120,9 +123,10 @@ async function ensureUsableCredentials(admin: ReturnType<typeof createClient>, u
     }
   }
 
-  const identity = await getInstagramIdentity({ accessToken, graphVersion: GRAPH_VERSION });
+  const accountId = String(secret.account_id ?? "");
+  const identity = await getInstagramIdentity({ accountId, accessToken, graphVersion: GRAPH_VERSION });
   if (!isExpectedInstagramAccount(identity) || identity.id !== String(secret.account_id ?? "")) throw new Error("instagram_identity_mismatch");
-  return { accessToken, identity, expiresAt: String(secret.token_expires_at), refreshWarning };
+  return { accessToken, identity, expiresAt: Number.isFinite(expiresAt) ? new Date(expiresAt).toISOString() : null, refreshWarning };
 }
 
 Deno.serve(async (request: Request) => {
@@ -148,19 +152,22 @@ Deno.serve(async (request: Request) => {
     const settings = await getSettings(context.admin);
     if (action === "save_app") {
       const appId = String(body.app_id ?? "").trim();
+      const configId = String(body.config_id ?? "").trim();
       const appSecret = String(body.app_secret ?? "").trim();
-      if (!/^\d{5,32}$/.test(appId) || appSecret.length < 8 || appSecret.length > 512 || /[\r\n]/.test(appSecret)) {
+      if (!/^\d{5,32}$/.test(appId) || !/^\d{8,32}$/.test(configId) || appSecret.length < 8 || appSecret.length > 512 || /[\r\n]/.test(appSecret)) {
         return json({ error: "invalid_meta_app_credentials" }, 422, origin);
       }
       let credential: Record<string, unknown> = {};
       if (settings?.secret_reference) credential = await readSecret(context.admin, String(settings.secret_reference));
       const appChanged = credential.app_id !== appId;
+      const configurationChanged = appChanged || credential.config_id !== configId;
       const verifyToken = appChanged || typeof credential.verify_token !== "string" ? randomSecret() : credential.verify_token;
       const nextSecret = {
         app_id: appId,
         app_secret: appSecret,
         verify_token: verifyToken,
-        ...(appChanged ? {} : Object.fromEntries(Object.entries(credential).filter(([key]) => !["app_id", "app_secret"].includes(key)))),
+        config_id: configId,
+        ...(configurationChanged ? {} : Object.fromEntries(Object.entries(credential).filter(([key]) => !["app_id", "app_secret", "config_id"].includes(key)))),
       };
       const { data: secretId, error: secretError } = await context.admin.rpc("meta_instagram_secret_store", {
         p_secret: JSON.stringify(nextSecret), p_secret_id: settings?.secret_reference ?? null,
@@ -169,16 +176,19 @@ Deno.serve(async (request: Request) => {
       const publicConfig = {
         ...(appChanged ? {} : (settings?.public_config ?? {})),
         app_id: appId,
+        config_id: configId,
+        auth_flow: "instagram_unified_login",
         callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-instagram-oauth-callback`,
         app_configured_at: new Date().toISOString(),
       };
       await saveSettings(context.admin, context.user.id, {
-        status: appChanged ? "not_configured" : settings?.status ?? "not_configured",
+        status: configurationChanged ? "not_configured" : settings?.status ?? "not_configured",
         public_config: publicConfig, secret_reference: String(secretId),
       });
       return json({
         configured: true,
         app_id: appId,
+        config_id: configId,
         callback_url: publicConfig.callback_url,
         business_callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-business-oauth-callback`,
         webhook_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-webhook`,
@@ -193,22 +203,22 @@ Deno.serve(async (request: Request) => {
     }
 
     if (action === "status") {
-      const appConfigured = Boolean(settings?.secret_reference && /^\d{5,32}$/.test(String(settings?.public_config?.app_id ?? "")));
+      const appConfigured = Boolean(settings?.secret_reference && /^\d{5,32}$/.test(String(settings?.public_config?.app_id ?? "")) && /^\d{8,32}$/.test(String(settings?.public_config?.config_id ?? "")));
       if (!appConfigured) return json({ status: "not_configured", app_configured: false, connected: false,
         callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-instagram-oauth-callback`,
         business_callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-business-oauth-callback`,
         webhook_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-webhook` }, 200, origin);
       const secret = await readSecret(context.admin, String(settings?.secret_reference));
       const businessCheck = settings.public_config?.business_portfolio_check ?? null;
-      if (!secret.access_token) return json({ status: "awaiting_authorization", app_configured: true, connected: false, app_id: settings?.public_config?.app_id, callback_url: settings?.public_config?.callback_url, business_callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-business-oauth-callback`, webhook_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-webhook`, business_check: businessCheck }, 200, origin);
+      if (!secret.access_token) return json({ status: "awaiting_authorization", app_configured: true, connected: false, app_id: settings?.public_config?.app_id, config_id: settings?.public_config?.config_id, callback_url: settings?.public_config?.callback_url, business_callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-business-oauth-callback`, webhook_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-webhook`, business_check: businessCheck }, 200, origin);
       try {
         const usable = await ensureUsableCredentials(context.admin, context.user.id, settings as Record<string, unknown>);
         return json({
           status: "configured", app_configured: true, connected: true,
           username: usable.identity.username, account_id: usable.identity.id,
-          granted_permissions: settings?.public_config?.granted_permissions ?? [],
+          configured_permissions: settings?.public_config?.configured_permissions ?? [],
           token_expires_at: usable.expiresAt, refresh_warning: usable.refreshWarning,
-          app_id: settings?.public_config?.app_id, callback_url: settings?.public_config?.callback_url,
+          app_id: settings?.public_config?.app_id, config_id: settings?.public_config?.config_id, callback_url: settings?.public_config?.callback_url,
           business_callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-business-oauth-callback`, business_check: businessCheck,
           webhook_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-webhook`,
         }, 200, origin);
@@ -235,3 +245,4 @@ Deno.serve(async (request: Request) => {
     return json({ error: code }, 503, origin);
   }
 });
+

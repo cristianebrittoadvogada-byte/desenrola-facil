@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { exchangeForLongLivedToken, exchangeInstagramCode, getInstagramIdentity, isExpectedInstagramAccount, sha256Hex } from "../meta-instagram/logic.mjs";
+import { INSTAGRAM_OAUTH_SCOPES, exchangeInstagramCode, getAssignedInstagramAccounts, getInstagramClientBusinessId, isExpectedInstagramAccount, sha256Hex } from "../meta-instagram/logic.mjs";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -56,31 +56,43 @@ Deno.serve(async (request: Request) => {
     const stored = await readSecret(admin, secretId);
     if (stored.app_id !== appId || typeof stored.app_secret !== "string" || stored.app_secret.length < 8) throw new Error("app_setup_required");
 
+    const configId = String(settings.public_config?.config_id ?? "");
+    if (!/^\d{8,32}$/.test(configId)) throw new Error("app_setup_required");
     const callbackUrl = `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-instagram-oauth-callback`;
-    const shortToken = await exchangeInstagramCode({ appId, appSecret: stored.app_secret, redirectUri: callbackUrl, code });
-    const longToken = await exchangeForLongLivedToken({ appSecret: stored.app_secret, shortLivedToken: shortToken.access_token });
-    const identity = await getInstagramIdentity({ accessToken: longToken.accessToken, graphVersion: GRAPH_VERSION });
-    if (!isExpectedInstagramAccount(identity)) throw new Error("wrong_instagram_account");
-    const scopedUserId = String(shortToken.user_id ?? "");
-    if (scopedUserId && scopedUserId !== identity.id) throw new Error("instagram_identity_mismatch");
+    const token = await exchangeInstagramCode({ appId, appSecret: stored.app_secret, code, graphVersion: GRAPH_VERSION });
+    const accessToken = token.access_token;
+    const business = await getInstagramClientBusinessId({ accessToken, graphVersion: GRAPH_VERSION });
+    const accounts = await getAssignedInstagramAccounts({ accessToken, graphVersion: GRAPH_VERSION });
+    const identity = accounts.find(isExpectedInstagramAccount);
+    if (!identity) throw new Error("wrong_instagram_account");
 
     const obtainedAt = new Date();
-    const expiresAt = new Date(obtainedAt.getTime() + longToken.expiresIn * 1000).toISOString();
-    const permissions = String(shortToken.permissions ?? "").split(",").map((scope) => scope.trim()).filter(Boolean);
+    const expiresIn = Number(token.expires_in);
+    const expiresAt = Number.isFinite(expiresIn) && expiresIn > 0
+      ? new Date(obtainedAt.getTime() + expiresIn * 1000).toISOString()
+      : null;
+    const permissions = [...INSTAGRAM_OAUTH_SCOPES];
     await storeSecret(admin, secretId, {
       ...stored,
-      access_token: longToken.accessToken,
+      auth_flow: "instagram_unified_login",
+      token_type: "business_integration_system_user",
+      access_token: accessToken,
       token_obtained_at: obtainedAt.toISOString(),
       token_expires_at: expiresAt,
+      client_business_id: business.clientBusinessId,
       account_id: identity.id,
       username: identity.username,
+      config_id: configId,
       granted_permissions: permissions,
     });
     const publicConfig = {
       ...(settings.public_config ?? {}),
+      auth_flow: "instagram_unified_login",
       account_id: identity.id,
       username: identity.username,
-      granted_permissions: permissions,
+      configured_permissions: permissions,
+      client_business_id: business.clientBusinessId,
+      config_id: configId,
       token_expires_at: expiresAt,
       callback_url: callbackUrl,
       connected_at: obtainedAt.toISOString(),
@@ -96,3 +108,4 @@ Deno.serve(async (request: Request) => {
     return redirectResult("error", code);
   }
 });
+

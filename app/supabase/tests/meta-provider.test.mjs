@@ -18,7 +18,7 @@ test("WhatsApp usa somente Cloud API oficial e token em header", async () => {
   assert.equal(JSON.parse(captured.options.body).messaging_product, "whatsapp");
 });
 
-test("Instagram usa Instagram Login API e limite documentado de bytes", async () => {
+test("Instagram usa Unified Login API oficial no Graph e limite documentado de bytes", async () => {
   let capturedUrl = "";
   const result = await sendMetaTextMessage({
     channel: "instagram", recipientId: "ig-user-test", text: "Olá",
@@ -29,7 +29,7 @@ test("Instagram usa Instagram Login API e limite documentado de bytes", async ()
     },
   });
   assert.equal(result.ok, true);
-  assert.equal(capturedUrl, "https://graph.instagram.com/v27.0/78910/messages");
+  assert.equal(capturedUrl, "https://graph.facebook.com/v27.0/78910/messages");
 
   const tooLong = await sendMetaTextMessage({
     channel: "instagram", recipientId: "ig-user-test", text: "é".repeat(501),
@@ -46,3 +46,4 @@ test("sem segredo ou versão não realiza chamada externa", async () => {
   });
   assert.equal(result.code, "graph_version_not_configured");
 });
+
