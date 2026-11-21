@@ -5,8 +5,13 @@ import { isFirstOwnerIdentityAllowed, normalizeOwnerProfile } from "./logic.mjs"
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const allowedOrigins = (Deno.env.get("WEB_ORIGIN") ?? "http://localhost:3000,http://127.0.0.1:3000,https://desenrola-facil-painel.onrender.com")
-  .split(",").map((origin) => origin.trim()).filter(Boolean);
+const allowedOrigins = new Set([
+  ...(Deno.env.get("WEB_ORIGIN") ?? "").split(",").map((origin) => origin.trim()).filter(Boolean),
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://desenrola-facil-painel.onrender.com",
+  "https://desenrola-facil-painel-72oq.onrender.com",
+]);
 
 function respond(body: unknown, status: number, origin = "") {
   const headers = new Headers({
@@ -14,7 +19,7 @@ function respond(body: unknown, status: number, origin = "") {
     "Cache-Control": "no-store",
     "Vary": "Origin",
   });
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin && allowedOrigins.has(origin)) {
     headers.set("Access-Control-Allow-Origin", origin);
     headers.set("Access-Control-Allow-Headers", "authorization, apikey, content-type");
     headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");

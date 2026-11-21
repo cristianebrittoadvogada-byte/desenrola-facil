@@ -5,13 +5,18 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const apiKey = Deno.env.get("ASAAS_SANDBOX_API_KEY") ?? "";
-const allowedOrigins = (Deno.env.get("WEB_ORIGIN") ?? "http://localhost:3000,http://127.0.0.1:3000,https://desenrola-facil-painel.onrender.com")
-  .split(",").map((value) => value.trim()).filter(Boolean);
+const allowedOrigins = new Set([
+  ...(Deno.env.get("WEB_ORIGIN") ?? "").split(",").map((value) => value.trim()).filter(Boolean),
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://desenrola-facil-painel.onrender.com",
+  "https://desenrola-facil-painel-72oq.onrender.com",
+]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function reply(body, status, origin = "") {
   const headers = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", vary: "Origin" });
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin && allowedOrigins.has(origin)) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-headers", "authorization, apikey, content-type");
     headers.set("access-control-allow-methods", "POST, OPTIONS");

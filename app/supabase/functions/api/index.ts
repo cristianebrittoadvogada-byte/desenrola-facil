@@ -2,8 +2,13 @@ import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-const allowedOrigins = (Deno.env.get("WEB_ORIGIN") ?? "http://localhost:3000,http://127.0.0.1:3000,https://desenrola-facil-painel.onrender.com")
-  .split(",").map((origin) => origin.trim()).filter(Boolean);
+const allowedOrigins = new Set([
+  ...(Deno.env.get("WEB_ORIGIN") ?? "").split(",").map((origin) => origin.trim()).filter(Boolean),
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://desenrola-facil-painel.onrender.com",
+  "https://desenrola-facil-painel-72oq.onrender.com",
+]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function response(body, status = 200, origin = "") {
@@ -12,7 +17,7 @@ function response(body, status = 200, origin = "") {
     "Cache-Control": "no-store",
     "Vary": "Origin",
   });
-  if (origin && allowedOrigins.includes(origin)) {
+  if (origin && allowedOrigins.has(origin)) {
     headers.set("Access-Control-Allow-Origin", origin);
     headers.set("Access-Control-Allow-Headers", "authorization, apikey, content-type");
     headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");

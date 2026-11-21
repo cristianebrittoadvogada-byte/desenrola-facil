@@ -41,6 +41,9 @@ test("Edge Function valida JWT e identidade antes de chamar RPC privilegiada", (
   assert.match(functionSource, /auth\.getUser\(\)/);
   assert.match(functionSource, /isFirstOwnerIdentityAllowed\(user\)/);
   assert.match(functionSource, /serviceDb\.rpc\("bootstrap_first_company_owner"/);
+  assert.match(functionSource, /https:\/\/desenrola-facil-painel-72oq\.onrender\.com/);
+  assert.match(functionSource, /allowedOrigins\.has\(origin\)/);
+  assert.doesNotMatch(functionSource, /Access-Control-Allow-Origin", "\*"/);
   assert.doesNotMatch(functionSource, /service_role.{0,80}console\.(log|info|debug)/is);
 });
 

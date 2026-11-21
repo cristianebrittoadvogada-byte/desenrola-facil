@@ -65,7 +65,9 @@ test("confirma a venda sem caixa disponível até PAYMENT_RECEIVED", () => {
 
 test("checkout Sandbox permite CORS somente no painel previsto e pode ser ajustado por segredo", async () => {
   const source = await readFile(new URL("../functions/payments/index.ts", import.meta.url), "utf8");
-  assert.match(source, /Deno\.env\.get\("WEB_ORIGIN"\) \?\? "http:\/\/localhost:3000,http:\/\/127\.0\.0\.1:3000,https:\/\/desenrola-facil-painel\.onrender\.com"/);
+  assert.match(source, /Deno\.env\.get\("WEB_ORIGIN"\)/);
+  assert.match(source, /https:\/\/desenrola-facil-painel-72oq\.onrender\.com/);
+  assert.match(source, /allowedOrigins\.has\(origin\)/);
 });
 
 test("webhook ignora evento com venda, cobrança ou valor divergente", () => {
