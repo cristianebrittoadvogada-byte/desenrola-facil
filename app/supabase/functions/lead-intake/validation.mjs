@@ -13,6 +13,11 @@ export function isAllowedOrigin(origin) {
   return typeof origin === "string" && allowedOrigins.has(origin);
 }
 
+export function responseBody(body, status) {
+  // Fetch/Edge Runtime forbids bodies for 204 and 304 responses.
+  return status === 204 || status === 304 ? null : JSON.stringify(body);
+}
+
 export function normalizePhone(value) {
   const raw = String(value ?? "").trim();
   const digits = raw.replace(/\D/g, "");
@@ -42,4 +47,3 @@ export function validateLeadPayload(payload) {
   // Keep only approved CRM fields; free-text goals never enter the database.
   return { ok: true, value: { requestId, name, phone, email, source, consent } };
 }
-

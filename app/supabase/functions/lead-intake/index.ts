@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { isAllowedOrigin, validateLeadPayload } from "./validation.mjs";
+import { isAllowedOrigin, responseBody, validateLeadPayload } from "./validation.mjs";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -22,7 +22,7 @@ function response(body: unknown, status: number, origin: string | null) {
     headers.set("Access-Control-Allow-Headers", "apikey, content-type, x-client-info");
     headers.set("Access-Control-Max-Age", "600");
   }
-  return new Response(JSON.stringify(body), { status, headers });
+  return new Response(responseBody(body, status), { status, headers });
 }
 
 async function requestKey(request: Request) {
@@ -93,4 +93,3 @@ Deno.serve(async (request: Request) => {
   if (error || data?.accepted !== true) return response({ error: "lead_save_failed" }, 503, origin);
   return response({ accepted: true }, 200, origin);
 });
-
