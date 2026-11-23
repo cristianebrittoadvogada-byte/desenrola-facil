@@ -228,8 +228,15 @@ async function processJob(event, references, metaCredentials) {
 Deno.serve(async (request) => {
   if (request.method === "GET") {
     if (!database) return json({ error: "meta_webhook_not_configured" }, 503);
+    const url = new URL(request.url);
+    const hasMetaChallenge = ["hub.mode", "hub.challenge", "hub.verify_token"]
+      .some((key) => url.searchParams.has(key));
+    if (!hasMetaChallenge) {
+      return json({ status: "deployed", meta_verification: "awaiting_meta_challenge" });
+    }
     const credentials = await loadMetaCredentials();
-    const challenge = verifyMetaWebhookChallenge(new URL(request.url).searchParams, credentials?.verifyToken ?? "");
+    if (!credentials?.verifyToken) return json({ error: "meta_webhook_not_configured" }, 503);
+    const challenge = verifyMetaWebhookChallenge(url.searchParams, credentials.verifyToken);
     return challenge ? new Response(challenge, { headers: { "Content-Type": "text/plain; charset=utf-8" } }) : json({ error: "invalid_challenge" }, 403);
   }
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
