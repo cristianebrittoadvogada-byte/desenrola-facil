@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { isAllowedOrigin, normalizePhone, validateLeadPayload } from "../functions/lead-intake/validation.mjs";
+import { isAllowedOrigin, normalizePhone, responseBody, validateLeadPayload } from "../functions/lead-intake/validation.mjs";
 
 const validPayload = {
   request_id: "f79d7d2f-29a5-4e20-9caa-5c7cba6e3fb4",
@@ -24,6 +24,12 @@ test("normaliza DDD brasileiro e telefones internacionais sem guardar formataç�
   assert.equal(normalizePhone("(21) 99999-1111"), "5521999991111");
   assert.equal(normalizePhone("+1 (212) 555-0100"), "12125550100");
   assert.equal(normalizePhone("123"), null);
+});
+
+test("respostas sem conteúdo não tentam serializar body para status 204 ou 304", () => {
+  assert.equal(responseBody({ ok: true }, 204), null);
+  assert.equal(responseBody({ ok: true }, 304), null);
+  assert.equal(responseBody({ accepted: true }, 200), JSON.stringify({ accepted: true }));
 });
 
 test("captura mantém somente os campos aprovados e exclui objetivo livre", () => {
@@ -71,6 +77,7 @@ test("Edge Function mantém validação server-side e não registra conteúdo pe
   assert.match(source, /isAllowedOrigin\(origin\)/);
   assert.match(source, /consumeRateLimit\(key\)/);
   assert.match(source, /capture_public_mentoria_lead/);
+  assert.match(source, /responseBody\(body, status\)/);
   assert.doesNotMatch(source, /console\.(log|error)\s*\(/);
   assert.doesNotMatch(source, /company_website|goal/);
 });
