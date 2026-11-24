@@ -5,7 +5,7 @@ const status = document.getElementById("form-message");
 const continueLink = document.getElementById("whatsapp-continue");
 const phoneInput = document.getElementById("interest-phone");
 const submitButton = document.getElementById("prepare-message");
-const intakeUrl = "https://nmkneyzyxxhebkurgimh.supabase.co/functions/v1/lead-intake";
+const intakeUrl = "https://majpjlklkbswvvxwpvdm.supabase.co/functions/v1/lead-intake";
 let requestId = null;
 
 function validatePhone() {
