@@ -220,6 +220,44 @@
           </form>
           <p id="meta-publish-result" class="fine-print" role="status" aria-live="polite"></p>
         </article>
+        <article class="panel content-studio">
+          <div class="section-heading"><div><p class="eyebrow">CONTEÚDO EDITORIAL</p><h3>Canva → revisão → Metricool</h3></div><button id="content-status-refresh" class="button-secondary" type="button">Atualizar conexões</button></div>
+          <p id="content-studio-status" class="notice" role="status" aria-live="polite">Verificando conexões...</p>
+          <div class="integration-grid">
+            <form id="canva-config-form" class="form-grid">
+              <h4>Canva — OAuth oficial</h4>
+              <label>Client ID<input id="canva-client-id" autocomplete="off" maxlength="256" required></label>
+              <label>Client Secret<input id="canva-client-secret" type="password" autocomplete="new-password" maxlength="512" required></label>
+              <button type="submit">Guardar no Vault</button>
+              <button id="canva-connect-button" class="button-secondary" type="button" disabled>Autorizar Canva</button>
+              <p class="fine-print wide-field">Callback: <code id="canva-callback-url"></code>. O fluxo usa PKCE e o token fica no Vault do projeto conectado ao painel.</p>
+            </form>
+            <form id="metricool-config-form" class="form-grid">
+              <h4>Metricool — API oficial</h4>
+              <label>Token da API<input id="metricool-api-token" type="password" autocomplete="new-password" maxlength="4096" required></label>
+              <label>User ID<input id="metricool-user-id" inputmode="numeric" autocomplete="off" required></label>
+              <label>Blog ID da marca<input id="metricool-blog-id" inputmode="numeric" autocomplete="off" required></label>
+              <button type="submit">Guardar no Vault</button>
+              <button id="metricool-verify-button" class="button-secondary" type="button" disabled>Verificar conta</button>
+              <p class="fine-print wide-field">O uso da API depende de a conta Metricool incluir esse recurso. Nenhum plano será alterado ou contratado.</p>
+            </form>
+          </div>
+          <form id="content-export-form" class="form-grid content-export-form">
+            <h4>Preparar peça para aprovação</h4>
+            <label>URL do design Canva<input id="content-design-url" type="url" inputmode="url" placeholder="https://www.canva.com/design/..." required></label>
+            <label>Data e hora de publicação<input id="content-scheduled-at" type="datetime-local" required></label>
+            <label class="wide-field">Legenda<textarea id="content-caption" rows="4" maxlength="2200" required></textarea></label>
+            <button type="submit">Exportar para revisão</button>
+            <p class="fine-print wide-field">A exportação fica privada no Supabase. Nada é agendado nem publicado até aprovação humana explícita.</p>
+          </form>
+          <div class="section-heading content-jobs-heading"><div><p class="eyebrow">FILA EDITORIAL</p><h4>Peças e aprovações</h4></div><button id="content-jobs-refresh" class="button-secondary" type="button">Atualizar fila</button></div>
+          <div id="content-jobs" class="content-jobs" aria-live="polite"><p class="muted">Entre como administradora para consultar a fila.</p></div>
+        </article>
+        <article class="panel">
+          <div class="section-heading"><div><p class="eyebrow">ATENDIMENTO IA</p><h3>WhatsApp comercial</h3></div></div>
+          <p id="ai-provider-status" class="notice" role="status" aria-live="polite">IA contextual depende de credencial de provedor configurada no ambiente de atendimento.</p>
+          <p class="fine-print">A chave do provedor deve ser inserida no ambiente seguro do projeto de produção. Chamadas de API podem gerar cobrança no provedor; nenhuma foi realizada nesta execução. Enquanto não estiver configurada, o webhook mantém o modo de contingência existente e transfere casos sensíveis para atendimento humano.</p>
+        </article>
       </section>
       <p class="fine-print test-warning">Homologação. Utilize somente dados fictícios. WhatsApp e Asaas permanecem desconectados até suas autorizações oficiais; a conexão Meta exibida acima reflete a verificação remota.</p>
     </section>
