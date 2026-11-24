@@ -1,5 +1,12 @@
 const textEncoder = new TextEncoder();
 
+export function resolveMetaWebhookSecrets(env = {}, vault = {}) {
+  return {
+    appSecret: env.META_APP_SECRET || vault.app_secret || "",
+    verifyToken: env.META_WEBHOOK_VERIFY_TOKEN || vault.verify_token || "",
+  };
+}
+
 function constantTimeEqual(left, right) {
   if (left.length !== right.length) return false;
   let mismatch = 0;
@@ -34,4 +41,5 @@ export function verifyMetaWebhookChallenge(params, expectedVerifyToken) {
   if (mode !== "subscribe" || !challenge || !receivedToken || !expectedVerifyToken) return null;
   return constantTimeEqual(receivedToken, expectedVerifyToken) ? challenge : null;
 }
+
 

@@ -4,7 +4,7 @@ import { generateContextualSalesReply } from "../agent/ai.mjs";
 import { normalizeMetaWebhook } from "./normalize.mjs";
 import { recordExplicitServiceConsent } from "./consent.mjs";
 import { sendMetaTextMessage } from "./provider.mjs";
-import { verifyMetaWebhookChallenge, verifyMetaWebhookSignature } from "./security.mjs";
+import { resolveMetaWebhookSecrets, verifyMetaWebhookChallenge, verifyMetaWebhookSignature } from "./security.mjs";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -37,17 +37,23 @@ function waitUntil(promise) {
 }
 
 async function loadMetaCredentials() {
-  if (!database) return null;
+  const envSecrets = resolveMetaWebhookSecrets({
+    META_APP_SECRET: Deno.env.get("META_APP_SECRET") ?? "",
+    META_WEBHOOK_VERIFY_TOKEN: Deno.env.get("META_WEBHOOK_VERIFY_TOKEN") ?? "",
+  });
+  const emptyCredentials = { ...envSecrets, instagramAccountId: "", instagramAccessToken: "" };
+  if (!database) return emptyCredentials;
   const { data: settings, error: settingsError } = await database.from("integration_settings")
     .select("public_config,secret_reference").eq("provider", "instagram_graph").maybeSingle();
-  if (settingsError || !settings?.secret_reference) return null;
+  if (settingsError || !settings?.secret_reference) return emptyCredentials;
   const { data, error } = await database.rpc("meta_instagram_secret_read", { p_secret_id: settings.secret_reference });
-  if (error || typeof data !== "string") return null;
+  if (error || typeof data !== "string") return emptyCredentials;
   let credential;
-  try { credential = JSON.parse(data); } catch { return null; }
+  try { credential = JSON.parse(data); } catch { return emptyCredentials; }
+  const vaultSecrets = resolveMetaWebhookSecrets({}, credential);
   return {
-    appSecret: typeof credential.app_secret === "string" ? credential.app_secret : "",
-    verifyToken: typeof credential.verify_token === "string" ? credential.verify_token : "",
+    appSecret: envSecrets.appSecret || vaultSecrets.appSecret,
+    verifyToken: envSecrets.verifyToken || vaultSecrets.verifyToken,
     instagramAccountId: typeof credential.account_id === "string" ? credential.account_id : "",
     instagramAccessToken: typeof credential.access_token === "string" ? credential.access_token : "",
   };
@@ -183,27 +189,29 @@ async function processJob(event, references, metaCredentials) {
   let replyMode = "rules_fallback";
   if (event.channel === "whatsapp" && decision.action === "reply") {
     const aiProvider = await loadAIProvider();
-    if (aiProvider) {
-      const { data: previousMessages, error: historyError } = await database.from("conversation_events")
-        .select("direction,body,occurred_at")
-        .eq("thread_id", job.thread_id)
-        .neq("id", job.conversation_event_id)
-        .order("occurred_at", { ascending: false }).limit(8);
-      if (historyError) return await fail("conversation_memory_unavailable", "retrying");
-      const generated = await generateContextualSalesReply({
-        apiKey: aiProvider.apiKey,
-        model: aiProvider.model,
-        offers: offers ?? [],
-        history: (previousMessages ?? []).reverse(),
-        currentText: inbound.body,
-      });
-      if (!generated.ok) {
-        await database.from("conversation_threads").update({ control_state: "human_requested", handoff_reason: "IA indisponível; atendimento humano necessário" }).eq("id", job.thread_id);
-        return await fail(generated.code, "ignored");
-      }
-      decision.reply = generated.reply;
-      replyMode = "contextual_ai";
+    if (!aiProvider) {
+      await database.from("conversation_threads").update({ control_state: "human_requested", handoff_reason: "IA generativa não configurada; atendimento humano necessário" }).eq("id", job.thread_id);
+      return await fail("ai_provider_not_configured", "ignored");
     }
+    const { data: previousMessages, error: historyError } = await database.from("conversation_events")
+      .select("direction,body,occurred_at")
+      .eq("thread_id", job.thread_id)
+      .neq("id", job.conversation_event_id)
+      .order("occurred_at", { ascending: false }).limit(8);
+    if (historyError) return await fail("conversation_memory_unavailable", "retrying");
+    const generated = await generateContextualSalesReply({
+      apiKey: aiProvider.apiKey,
+      model: aiProvider.model,
+      offers: offers ?? [],
+      history: (previousMessages ?? []).reverse(),
+      currentText: inbound.body,
+    });
+    if (!generated.ok) {
+      await database.from("conversation_threads").update({ control_state: "human_requested", handoff_reason: "IA indisponível; atendimento humano necessário" }).eq("id", job.thread_id);
+      return await fail(generated.code, "ignored");
+    }
+    decision.reply = generated.reply;
+    replyMode = "contextual_ai";
   }
   if (decision.intent === "offer_interest" && decision.productCode) {
     const product = (offers ?? []).find((item) => item.code === decision.productCode);

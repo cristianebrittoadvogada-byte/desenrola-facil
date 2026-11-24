@@ -1,7 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
-import { verifyMetaWebhookSignature, verifyMetaWebhookChallenge } from "../functions/meta-webhook/security.mjs";
+import { resolveMetaWebhookSecrets, verifyMetaWebhookSignature, verifyMetaWebhookChallenge } from "../functions/meta-webhook/security.mjs";
+
+test("Meta webhook secrets prefer environment values and fall back to Vault", () => {
+  assert.deepEqual(resolveMetaWebhookSecrets(
+    { META_APP_SECRET: "environment-app-secret", META_WEBHOOK_VERIFY_TOKEN: "environment-verify-token" },
+    { app_secret: "vault-app-secret", verify_token: "vault-verify-token" },
+  ), { appSecret: "environment-app-secret", verifyToken: "environment-verify-token" });
+  assert.deepEqual(resolveMetaWebhookSecrets(
+    {},
+    { app_secret: "vault-app-secret", verify_token: "vault-verify-token" },
+  ), { appSecret: "vault-app-secret", verifyToken: "vault-verify-token" });
+  assert.deepEqual(resolveMetaWebhookSecrets(), { appSecret: "", verifyToken: "" });
+});
 
 test("valida assinatura Meta sobre bytes brutos do webhook", async () => {
   const body = new TextEncoder().encode('{"object":"whatsapp_business_account","entry":[]}');
@@ -20,4 +32,5 @@ test("webhook GET só devolve challenge com modo e verify token corretos", () =>
   assert.equal(verifyMetaWebhookChallenge(invalid, "synthetic-token"), null);
   assert.equal(verifyMetaWebhookChallenge(new URLSearchParams(), "synthetic-token"), null);
 });
+
 
