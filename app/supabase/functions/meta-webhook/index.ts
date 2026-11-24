@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { canSendAutomatedMessage, decideSalesReply, nextFollowUpAt } from "../agent/core.mjs";
+import { generateContextualSalesReply } from "../agent/ai.mjs";
 import { normalizeMetaWebhook } from "./normalize.mjs";
 import { recordExplicitServiceConsent } from "./consent.mjs";
 import { sendMetaTextMessage } from "./provider.mjs";
@@ -50,6 +51,26 @@ async function loadMetaCredentials() {
     instagramAccountId: typeof credential.account_id === "string" ? credential.account_id : "",
     instagramAccessToken: typeof credential.access_token === "string" ? credential.access_token : "",
   };
+}
+
+async function loadAIProvider() {
+  if (!database) return null;
+  const envKey = Deno.env.get("OPENAI_API_KEY") ?? "";
+  if (envKey.length >= 20) return { apiKey: envKey, model: Deno.env.get("OPENAI_MODEL") ?? undefined };
+  try {
+    const { data: settings, error } = await database.from("content_integration_settings")
+      .select("status,secret_reference").eq("provider", "openai").maybeSingle();
+    if (error || settings?.status !== "configured" || !settings.secret_reference) return null;
+    const { data, error: secretError } = await database.rpc("content_secret_read", {
+      p_provider: "openai", p_secret_id: settings.secret_reference,
+    });
+    if (secretError || typeof data !== "string") return null;
+    const secret = JSON.parse(data);
+    if (typeof secret.api_key !== "string" || secret.api_key.length < 20) return null;
+    return { apiKey: secret.api_key, model: typeof secret.model === "string" ? secret.model : undefined };
+  } catch {
+    return null;
+  }
 }
 
 async function persistInbound(event) {
@@ -155,10 +176,35 @@ async function processJob(event, references, metaCredentials) {
   }
 
   const { data: offers, error: offerError } = await database.from("products")
-    .select("code,name,category,price,currency,format,duration_text,delivery_mode")
+    .select("code,name,category,description,price,currency,format,duration_text,delivery_mode")
     .eq("active", true).order("name");
   if (offerError) return await fail("offer_catalog_unavailable", "retrying");
   const decision = decideSalesReply({ text: inbound.body, offers: offers ?? [], controlState: thread.control_state });
+  let replyMode = "rules_fallback";
+  if (event.channel === "whatsapp" && decision.action === "reply") {
+    const aiProvider = await loadAIProvider();
+    if (aiProvider) {
+      const { data: previousMessages, error: historyError } = await database.from("conversation_events")
+        .select("direction,body,occurred_at")
+        .eq("thread_id", job.thread_id)
+        .neq("id", job.conversation_event_id)
+        .order("occurred_at", { ascending: false }).limit(8);
+      if (historyError) return await fail("conversation_memory_unavailable", "retrying");
+      const generated = await generateContextualSalesReply({
+        apiKey: aiProvider.apiKey,
+        model: aiProvider.model,
+        offers: offers ?? [],
+        history: (previousMessages ?? []).reverse(),
+        currentText: inbound.body,
+      });
+      if (!generated.ok) {
+        await database.from("conversation_threads").update({ control_state: "human_requested", handoff_reason: "IA indisponível; atendimento humano necessário" }).eq("id", job.thread_id);
+        return await fail(generated.code, "ignored");
+      }
+      decision.reply = generated.reply;
+      replyMode = "contextual_ai";
+    }
+  }
   if (decision.intent === "offer_interest" && decision.productCode) {
     const product = (offers ?? []).find((item) => item.code === decision.productCode);
     if (product) {
@@ -199,7 +245,7 @@ async function processJob(event, references, metaCredentials) {
   const { data: outbox, error: outboxError } = await database.from("conversation_events").insert({
     contact_id: references.contactId, thread_id: job.thread_id, channel: event.channel,
     direction: "outbound", actor_type: "automation", body: reply, delivery_status: "queued",
-    safe_metadata: { intent: decision.intent ?? "handoff" },
+    safe_metadata: { intent: decision.intent ?? "handoff", reply_mode: replyMode },
   }).select("id").single();
   if (outboxError || !outbox) return await fail("outbound_record_failed", "retrying");
 
@@ -228,15 +274,8 @@ async function processJob(event, references, metaCredentials) {
 Deno.serve(async (request) => {
   if (request.method === "GET") {
     if (!database) return json({ error: "meta_webhook_not_configured" }, 503);
-    const url = new URL(request.url);
-    const hasMetaChallenge = ["hub.mode", "hub.challenge", "hub.verify_token"]
-      .some((key) => url.searchParams.has(key));
-    if (!hasMetaChallenge) {
-      return json({ status: "deployed", meta_verification: "awaiting_meta_challenge" });
-    }
     const credentials = await loadMetaCredentials();
-    if (!credentials?.verifyToken) return json({ error: "meta_webhook_not_configured" }, 503);
-    const challenge = verifyMetaWebhookChallenge(url.searchParams, credentials.verifyToken);
+    const challenge = verifyMetaWebhookChallenge(new URL(request.url).searchParams, credentials?.verifyToken ?? "");
     return challenge ? new Response(challenge, { headers: { "Content-Type": "text/plain; charset=utf-8" } }) : json({ error: "invalid_challenge" }, 403);
   }
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -319,3 +358,4 @@ Deno.serve(async (request) => {
   }
   return json({ received: true });
 });
+
