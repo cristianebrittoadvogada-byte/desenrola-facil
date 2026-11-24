@@ -36,6 +36,20 @@ function waitUntil(promise) {
   else void promise;
 }
 
+async function readIntegrationCredential(provider) {
+  if (!database) return { settings: null, credential: null };
+  const { data: settings, error: settingsError } = await database.from("integration_settings")
+    .select("public_config,secret_reference").eq("provider", provider).maybeSingle();
+  if (settingsError || !settings?.secret_reference) return { settings: settings ?? null, credential: null };
+  const { data, error } = await database.rpc("meta_instagram_secret_read", { p_secret_id: settings.secret_reference });
+  if (error || typeof data !== "string") return { settings, credential: null };
+  try {
+    return { settings, credential: JSON.parse(data) };
+  } catch {
+    return { settings, credential: null };
+  }
+}
+
 async function loadMetaCredentials() {
   const envSecrets = resolveMetaWebhookSecrets({
     META_APP_SECRET: Deno.env.get("META_APP_SECRET") ?? "",
@@ -43,19 +57,34 @@ async function loadMetaCredentials() {
   });
   const emptyCredentials = { ...envSecrets, instagramAccountId: "", instagramAccessToken: "" };
   if (!database) return emptyCredentials;
-  const { data: settings, error: settingsError } = await database.from("integration_settings")
-    .select("public_config,secret_reference").eq("provider", "instagram_graph").maybeSingle();
-  if (settingsError || !settings?.secret_reference) return emptyCredentials;
-  const { data, error } = await database.rpc("meta_instagram_secret_read", { p_secret_id: settings.secret_reference });
-  if (error || typeof data !== "string") return emptyCredentials;
-  let credential;
-  try { credential = JSON.parse(data); } catch { return emptyCredentials; }
-  const vaultSecrets = resolveMetaWebhookSecrets({}, credential);
+
+  const [whatsapp, instagram] = await Promise.all([
+    readIntegrationCredential("whatsapp_cloud"),
+    readIntegrationCredential("instagram_graph"),
+  ]);
+  const webhookVaultSecrets = resolveMetaWebhookSecrets({}, whatsapp.credential ?? {});
+  const instagramVaultSecrets = resolveMetaWebhookSecrets({}, instagram.credential ?? {});
+  const instagramCredential = instagram.credential ?? {};
   return {
-    appSecret: envSecrets.appSecret || vaultSecrets.appSecret,
-    verifyToken: envSecrets.verifyToken || vaultSecrets.verifyToken,
-    instagramAccountId: typeof credential.account_id === "string" ? credential.account_id : "",
-    instagramAccessToken: typeof credential.access_token === "string" ? credential.access_token : "",
+    appSecret: envSecrets.appSecret || webhookVaultSecrets.appSecret || instagramVaultSecrets.appSecret,
+    verifyToken: envSecrets.verifyToken || webhookVaultSecrets.verifyToken || instagramVaultSecrets.verifyToken,
+    instagramAccountId: typeof instagramCredential.account_id === "string" ? instagramCredential.account_id : "",
+    instagramAccessToken: typeof instagramCredential.access_token === "string" ? instagramCredential.access_token : "",
+  };
+}
+
+async function loadWhatsAppCredentials(fallbackPhoneNumberId = "") {
+  const { settings, credential } = await readIntegrationCredential("whatsapp_cloud");
+  const publicConfig = settings?.public_config && typeof settings.public_config === "object"
+    ? settings.public_config
+    : {};
+  return {
+    phoneNumberId: Deno.env.get("WHATSAPP_PHONE_NUMBER_ID")
+      || (typeof publicConfig.phone_number_id === "string" ? publicConfig.phone_number_id : "")
+      || (typeof credential?.phone_number_id === "string" ? credential.phone_number_id : "")
+      || fallbackPhoneNumberId,
+    accessToken: Deno.env.get("WHATSAPP_ACCESS_TOKEN")
+      || (typeof credential?.access_token === "string" ? credential.access_token : ""),
   };
 }
 
@@ -257,12 +286,15 @@ async function processJob(event, references, metaCredentials) {
   }).select("id").single();
   if (outboxError || !outbox) return await fail("outbound_record_failed", "retrying");
 
+  const whatsappCredentials = event.channel === "whatsapp"
+    ? await loadWhatsAppCredentials(event.accountId)
+    : null;
   const sent = await sendMetaTextMessage({
     channel: event.channel, recipientId: event.senderId, text: reply,
     env: {
       META_GRAPH_VERSION: graphVersion,
-      WHATSAPP_PHONE_NUMBER_ID: Deno.env.get("WHATSAPP_PHONE_NUMBER_ID"),
-      WHATSAPP_ACCESS_TOKEN: Deno.env.get("WHATSAPP_ACCESS_TOKEN"),
+      WHATSAPP_PHONE_NUMBER_ID: whatsappCredentials?.phoneNumberId ?? "",
+      WHATSAPP_ACCESS_TOKEN: whatsappCredentials?.accessToken ?? "",
       INSTAGRAM_ACCOUNT_ID: metaCredentials?.instagramAccountId,
       INSTAGRAM_ACCESS_TOKEN: metaCredentials?.instagramAccessToken,
     },
