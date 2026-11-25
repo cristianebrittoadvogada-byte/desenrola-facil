@@ -1,127 +1,244 @@
-const $=(id)=>document.getElementById(id);
-const cache={};
-let accessToken="";
-let currentUser="";
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×­9é:-jZ.¶›­–)Þ³V6öç7BCÒ†–B“ÓæFö7VÖVçBævWDVÆVÖVçD'”–B†–B“°¦6öç7B66†S×·Ó°¦ÆWB66W75Fö¶VãÒ"#°¦ÆWB7W'&VçEW6W#Ò"#° ¦gVæ7F–öâ&VD6öæf–r‚—¶6öç7B6öæf–s×v–æF÷räDU4Tå$ôÄõ5U$4Uô4ôäd”wÇÇ·Ó·&WGW&â·W&Ã¥7G&–ær†6öæf–rçW&ÇÇÂ""’ç&WÆ6R‚õÂò²BòÂ""’Æ¶W“¥7G&–ær†6öæf–ræ¶W—ÇÂ""—×Ð¦gVæ7F–öâ6†÷uFö7B†ÖW76vR—¶6öç7BFö7CÒB‚'Fö7B"“·Fö7BçFW‡D6öçFVçCÖÖW76vS·Fö7Bæ†–FFVãÖfÇ6S·v–æF÷rç6WEF–ÖV÷WB‚‚“Óç·Fö7Bæ†–FFVã×G'VWÒÃC#—Ð¦gVæ7F–öâ6WDæ÷F–6R†ÖW76vRÆ—4W'&÷#ÖfÇ6R—¶6öç7B&÷ƒÒB‚&æ÷F–6R"“¶&÷‚çFW‡D6öçFVçCÖÖW76vS¶&÷‚æ6Æ74Æ—7BçFövvÆR‚&W'&÷""Æ—4W'&÷"—Ð¦gVæ7F–öâæ÷&ÖÆ—¦VEW&Â‡fÇVR—·&WGW&âfÇVRçG&–Ò‚’ç&WÆ6R‚õÂò²BòÂ""—Ð¦gVæ7F–öâfÇVR†–B—·&WGW&âB†–B’çfÇVRçG&–Ò‚—Ð¦gVæ7F–öâÖöæW’†Ö÷VçB—·&WGW&âæWr–çFÂäçVÖ&W$f÷&ÖB‚'BÔ%""Ç·7G–ÆS¢&7W'&Væ7’"Æ7W'&Væ7“¢$%$Â'Ò’æf÷&ÖB„çVÖ&W"†Ö÷VçGÇÃ’—Ð¦gVæ7F–öâFFR‡fÇVR—¶–b‚fÇVR—&WGW&â.(	B#¶6öç7BCÖæWrFFR‡fÇVR“·&WGW&âçVÖ&W"æ—4æâ†BævWEF–ÖR‚’“ò.(	B#¦æWr–çFÂäFFUF–ÖTf÷&ÖB‚'BÔ%""Ç¶FFU7G–ÆS¢'6†÷'B"ÇF–ÖU7G–ÆS¢'6†÷'B'Ò’æf÷&ÖB†B—Ð¦gVæ7F–öâFô—6ò‡fÇVR—·&WGW&âfÇVSöæWrFFR‡fÇVR’çFô•4õ7G&–ær‚“¦çVÆÇÐ¦gVæ7F–öâFôÆö6ÄFFUF–ÖR‡fÇVR—¶–b‚fÇVR—&WGW&â"#¶6öç7BCÖæWrFFR‡fÇVR“·&WGW&âçVÖ&W"æ—4æâ†BævWEF–ÖR‚’“ò"#¦æWrFFR†BævWEF–ÖR‚’ÖBævWEF–ÖW¦öæTöfg6WB‚’£c’çFô•4õ7G&–ær‚’ç6Æ–6RƒÃb—Ð¦gVæ7F–öâ6VÆÂ‡&÷rÇFW‡B—¶6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“·FBçFW‡D6öçFVçC×FW‡Cóò.(	B#·&÷ræVæB‡FB“·&WGW&âFGÐ¦gVæ7F–öâÖ¶T'WGFöâ†Æ&VÂÆ†æFÆW"Æ¶–æCÒ&'WGFöâ×6V6öæF'’"—¶6öç7B'WGFöãÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&'WGFöâ"“¶'WGFöâçG—SÒ&'WGFöâ#¶'WGFöâæ6Æ74æÖSÖ¶–æC¶'WGFöâçFW‡D6öçFVçCÖÆ&VÃ¶'WGFöâæFDWfVçDÆ—7FVæW"‚&6Æ–6²"Æ†æFÆW"“·&WGW&â'WGFöçÐ¦gVæ7F–öâ†5&öÆR‚ââç&öÆW2—·&WGW&â†66†Ræ†VÇFƒòç&öÆW7ÇÅµÒ’ç6öÖR‡&öÆSÓç&öÆW2æ–æ6ÇVFW2‡&öÆR’—Ð¦gVæ7F–öâ6WD÷F–öç2†–BÆ—FV×2ÆÆ&VÂÇfÇVT¶W“Ò&–B"ÆÆ&VÄ¶W“Ò&gVÆÅöæÖR"ÇÆ6V†öÆFW#Ò%6VÆV6–öæR"—°¢6öç7B6VÆV7CÒB†–B’ÆöÆC×6VÆV7BçfÇVS·6VÆV7Bç&WÆ6T6†–ÆG&Vâ‚“°¢6öç7BV×G“ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&÷F–öâ"“¶V×G’çfÇVSÒ"#¶V×G’çFW‡D6öçFVçC×Æ6V†öÆFW#·6VÆV7BæVæB†V×G’“°¢f÷"†6öç7B—FVÒöb—FV×7ÇÅµÒ—¶6öç7B÷F–öãÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&÷F–öâ"“¶÷F–öâçfÇVSÖ—FVÕ·fÇVT¶W•Ó¶÷F–öâçFW‡D6öçFVçCÖÆ&VÂ†—FVÒ“·6VÆV7BæVæB†÷F–öâ—Ð¢–b…²ââç6VÆV7Bæ÷F–öç5Òç6öÖR†÷F–öãÓæ÷F–öâçfÇVSÓÓÖöÆB’—6VÆV7BçfÇVSÖöÆC°§Ð¦gVæ7F–öâf–ÆÅ&VfW&Væ6TÆ—7G2‚—°¢6öç7B6öçF7G3Ö66†Ræ6öçF7G7ÇÅµÒÇ&öGV7G3Ò†66†Rç&öGV7G7ÇÅµÒ’æf–ÇFW"†—FVÓÓæ—FVÒæ7F—fR’ÆW‡W&–Væ6W3Ò†66†RæW‡W&–Væ6W7ÇÅµÒ’æf–ÇFW"†—FVÓÓæ—FVÒç7FGW3ÓÓÒ'ÆææVB"’Æ6öçG&7FVE6ÆW3ÖæWr6WB‚†66†Ræ6öçG&7G7ÇÅµÒ’æÖ†—FVÓÓæ—FVÒç6ÆUö–B’’Ç6ÆW3Ò†66†Rç6ÆW7ÇÅµÒ’æf–ÇFW"†—FVÓÓå²'VæF–ær"Â&6öæf—&ÖVB%Òæ–æ6ÇVFW2†—FVÒç7FGW2’’Æf–Æ&ÆT6öçG&7E6ÆW3×6ÆW2æf–ÇFW"†—FVÓÓâ6öçG&7FVE6ÆW2æ†2†—FVÒæ–B’“°¢f÷"†6öç7B–Böb²&÷÷'GVæ—G’Ö6öçF7B"Â'6ÆRÖ6öçF7B"Â&ö–çFÖVçBÖ6öçF7B"Â&æ÷FRÖ6öçF7B%Ò—6WD÷F–öç2†–BÆ6öçF7G2Â‡‚“Óç‚ægVÆÅöæÖR“°¢6WD÷F–öç2‚&÷÷'GVæ—G’×&öGV7B"Ç&öGV7G2Â‡‚“Óç‚ææÖRÂ&–B"Â&æÖR"Â%6VÒöfW'FFVf–æ–F"“°¢6WD÷F–öç2‚'6ÆR×&öGV7B"Ç&öGV7G2Â‡‚“ÓæG·‚ææÖWÒ+rG¶ÖöæW’‡‚ç&–6R—ÖÂ&–B"Â&æÖR"“°¢6WD÷F–öç2‚'&Vv—7G&F–öâÖ6öçF7B"Æ6öçF7G2Â‡‚“Óç‚ægVÆÅöæÖR“°¢6WD÷F–öç2‚'&Vv—7G&F–öâÖW‡W&–Væ6R"ÆW‡W&–Væ6W2Â‡‚“Óç‚ææÖRÂ&–B"Â&æÖR"“°¢6WD÷F–öç2‚'&Vv—7G&F–öâ×6ÆR"Ç6ÆW2Â‡‚“ÓæG·‚æ6öçF7CòægVÆÅöæÖWÇÂ$6öçFFò'Ò+rG·‚ç&öGV7CòææÖWÇÂ$öfW'F'Ò+rG·‚ç7FGW7ÖÂ&–B"Â&–B"Â%6VÒfVæFf–æ7VÆF"“°¢6WD÷F–öç2‚&6öçG&7B×6ÆR"Æf–Æ&ÆT6öçG&7E6ÆW2Â‡‚“ÓæG·‚æ6öçF7CòægVÆÅöæÖWÇÂ$6öçFFò'Ò+rG·‚ç&öGV7CòææÖWÇÂ$öfW'F'Ò+rG¶ÖöæW’‡‚æÖ÷VçB—ÖÂ&–B"Â&–B"Â%6VÆV6–öæRVÖfVæF"“°§Ð¦gVæ7F–öâ6fTÆ—7B†–BÆ—FV×2Ç&VæFW"—¶6öç7BF&vWCÒB†–B“·F&vWBç&WÆ6T6†–ÆG&Vâ‚“¶f÷"†6öç7B—FVÒöb—FV×7ÇÅµÒ—&VæFW"‡F&vWBÆ—FVÒ“¶–b‚—FV×3òæÆVæwF‚—¶6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""’ÇFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“·FBæ6öÅ7ã×F&vWBæ6Æ÷6W7B‚'F&ÆR"“òçVW'•6VÆV7F÷$ÆÂ‚'F†VBF‚"’æÆVæwF‡ÇÃƒ·FBçFW‡D6öçFVçCÒ$æVæ‡VÒ&Vv—7G&òæW7FRÖ&–VçFRâ#·G"æVæB‡FB“·F&vWBæVæB‡G"—×Ð¦gVæ7F–öâ&VæFW$6öçF7G2†—FV×2—°¢6fTÆ—7B‚&6öçF7G2"Æ—FV×2Â‡F&öG’Æ—FVÒ“Óç¶6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""“¶6VÆÂ‡G"Æ—FVÒægVÆÅöæÖR²†—FVÒæVÖ–Ãö+rG¶—FVÒæVÖ–ÇÖ¢""’“¶6VÆÂ‡G"Æ—FVÒç6÷W&6R“¶6öç7B7FvSÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"’Ç6VÆV7CÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'6VÆV7B"“¶f÷"†6öç7BfÇVRöb²&ÆVB"Â'VÆ–f–VB"Â&7W7FöÖW""Â&f÷&ÖW%ö7W7FöÖW""Â&F—7VÆ–f–VB%Ò—¶6öç7B÷F–öãÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&÷F–öâ"“¶÷F–öâçfÇVS×fÇVS¶÷F–öâçFW‡D6öçFVçC×fÇVS·6VÆV7BæVæB†÷F–öâ—×6VÆV7BçfÇVSÖ—FVÒæÆ–fV7–6ÆU÷7FvS·6VÆV7BæF—6&ÆVCÒ†5&öÆR‚&÷væW""Â&FÖ–â"Â&6öÖÖW&6–Â"“·7FvRæVæB‡6VÆV7B“·G"æVæB‡7FvR“¶6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“¶–b††5&öÆR‚&÷væW""Â&FÖ–â"Â&6öÖÖW&6–Â"’—·FBæVæB†Ö¶T'WGFöâ‚%6Çf"WF"Æ7–æ2‚“Óç¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö6öçF7G2òG¶—FVÒæ–GÒ÷7FvVÇ¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡¶Æ–fV7–6ÆU÷7FvS§6VÆV7BçfÇVWÒ—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“·FBæVæB†Ö¶T'WGFöâ‚$7&–"÷÷'GVæ–FFR"Â‚“Óç²B‚&÷÷'GVæ—G’Ö6öçF7B"’çfÇVSÖ—FVÒæ–C·6†÷uf–Wr‚&7&Ò"—Ò’—×G"æVæB‡FB“·F&öG’æVæB‡G"—Ò“°¢B‚&6öçF7BÖ6÷VçB"’çFW‡D6öçFVçCÕ7G&–ær†66†RæF6†&ö&Còæ6öçF7G3óö—FV×3òæÆVæwFƒóó“°§Ð¦gVæ7F–öâ&VæFW%&öGV7G2†—FV×2—°¢6öç7BÆ—7CÒB‚'&öGV7G2"“¶Æ—7Bç&WÆ6T6†–ÆG&Vâ‚“°¢f÷"†6öç7B—FVÒöb—FV×7ÇÅµÒ—¶6öç7BÆ“ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&Æ’"’ÇF—FÆSÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'7G&öær"’ÆFWF–ÃÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'7â"’Æ7F–öãÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&F—b"“·F—FÆRçFW‡D6öçFVçCÖ—FVÒææÖS¶FWF–ÂçFW‡D6öçFVçCÖG¶ÖöæW’†—FVÒç&–6R—Ò+rG¶—FVÒæf÷&ÖGÇÆ—FVÒæGW&F–öå÷FW‡GÇÆ—FVÒæFVÆ—fW'•öÖöFWÒ+rG¶—FVÒæ7F—fSò&F—f#¢&Væ6W'&F'Ö¶7F–öâæ6Æ74æÖSÒ'&÷rÖ7F–öç2#¶–b††5&öÆR‚&÷væW""Â&FÖ–â"’–7F–öâæVæB†Ö¶T'WGFöâ‚$VF—F""Â‚“Óç·6†÷uf–Wr‚&öffW'2"“²B‚'&öGV7BÖ–B"’çfÇVSÖ—FVÒæ–C²B‚'&öGV7BÖ6öFR"’çfÇVSÖ—FVÒæ6öFS²B‚'&öGV7BÖæÖR"’çfÇVSÖ—FVÒææÖS²B‚'&öGV7BÖ6FVv÷'’"’çfÇVSÖ—FVÒæ6FVv÷'“²B‚'&öGV7BÖÖöFR"’çfÇVSÖ—FVÒæFVÆ—fW'•öÖöFS²B‚'&öGV7B×&–6R"’çfÇVSÖ—FVÒç&–6S²B‚'&öGV7BÖf÷&ÖB"’çfÇVSÖ—FVÒæf÷&ÖGÇÂ"#²B‚'&öGV7BÖGW&F–öâ"’çfÇVSÖ—FVÒæGW&F–öå÷FW‡GÇÂ"#²B‚'&öGV7BÖGW&F–öâÖÖöçF‡2"’çfÇVSÖ—FVÒæGW&F–öåöÖöçF‡7ÇÂ"#²B‚'&öGV7BÖ7F—fR"’çfÇVSÕ7G&–ær†—FVÒæ7F—fR“²B‚'&öGV7BÖFW67&—F–öâ"’çfÇVSÖ—FVÒæFW67&—F–öçÇÂ"#·Ò’“¶Æ’æVæB‡F—FÆRÆFWF–ÂÆ7F–öâ“¶Æ—7BæVæB†Æ’—Ð¢B‚'&öGV7BÖ6÷VçB"’çFW‡D6öçFVçCÕ7G&–ær‚†—FV×7ÇÅµÒ’æf–ÇFW"†—FVÓÓæ—FVÒæ7F—fR’æÆVæwF‚“°§Ð¦gVæ7F–öâ&VæFW$÷÷'GVæ—F–W2†—FV×2—·6fTÆ—7B‚&÷÷'GVæ—F–W2"Æ—FV×2Â‡F&öG’Æ—FVÒ“Óç¶6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""“¶6VÆÂ‡G"Æ—FVÒæ6öçF7CòægVÆÅöæÖWÇÂ$6öçFFò"“¶6VÆÂ‡G"Æ—FVÒç&öGV7CòææÖWÇÂ.(	B"“¶6öç7B7FvSÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"’Ç6VÆV7CÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'6VÆV7B"“·6VÆV7BæFF6WBç7FvT–CÖ—FVÒæ–C¶f÷"†6öç7B÷F–öäæÖRöb²&æWr"Â&6öçF7FVB"Â'VÆ–f–VB"Â&öffW%÷&W6VçFVB"Â&æVv÷F–F–öâ"Â'vöâ"Â&Æ÷7B"Â&çW'GW&R%Ò—¶6öç7BóÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&÷F–öâ"“¶òçfÇVSÖ÷F–öäæÖS¶òçFW‡D6öçFVçCÖ÷F–öäæÖS·6VÆV7BæVæB†ò—×6VÆV7BçfÇVSÖ—FVÒç7FvS·7FvRæVæB‡6VÆV7B“·G"æVæB‡7FvR“¶6öç7BföÆÆ÷wW6VÆÃÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"’ÆföÆÆ÷wWÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&–çWB"“¶föÆÆ÷wWçG—SÒ&FFWF–ÖRÖÆö6Â#¶föÆÆ÷wWçfÇVS×FôÆö6ÄFFUF–ÖR†—FVÒææW‡EöföÆÆ÷u÷WöB“¶föÆÆ÷wWç6WDGG&–'WFR‚&&–ÖÆ&VÂ"Â%,;7†–Öò6ö×æ†ÖVçFò"“¶föÆÆ÷wW6VÆÂæVæB†föÆÆ÷wW“·G"æVæB†föÆÆ÷wW6VÆÂ“¶6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“·FBæVæB†Ö¶T'WGFöâ‚%6Çf"WFRFF"Æ7–æ2‚“Óç¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö÷÷'GVæ—F–W2òG¶—FVÒæ–GÒ÷7FvVÇ¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·7FvS§6VÆV7BçfÇVRÆæW‡EöföÆÆ÷u÷WöC§Fô—6ò†föÆÆ÷wWçfÇVR—Ò—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“·G"æVæB‡FB“·F&öG’æVæB‡G"—Ò—Ð¦gVæ7F–öâ&VæFW$föÆÆ÷wW2†—FV×2—·6fTÆ—7B‚&föÆÆ÷wW2"Æ—FV×2Â‡F&öG’Æ—FVÒ“Óç¶6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""“¶6VÆÂ‡G"ÆFFR†—FVÒææW‡EöföÆÆ÷u÷WöB’“¶6VÆÂ‡G"ÆG¶—FVÒæ6öçF7CòægVÆÅöæÖWÇÂ$6öçFFò'ÒG¶—FVÒæ6öçF7Còç†öæSö+rG¶—FVÒæ6öçF7Bç†öæWÖ¢"'Ö“¶6VÆÂ‡G"Æ—FVÒç&öGV7CòææÖWÇÂ.(	B"“¶6VÆÂ‡G"Æ—FVÒç7FvR“¶6öç7BFFT6VÆÃÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"’Æ–çWCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&–çWB"“¶–çWBçG—SÒ&FFWF–ÖRÖÆö6Â#¶–çWBç6WDGG&–'WFR‚&&–ÖÆ&VÂ"Æ&VvVæF"föÆÆ÷r×WFRG¶—FVÒæ6öçF7CòægVÆÅöæÖWÇÂ&6öçFFò'Ö“¶FFT6VÆÂæVæB†–çWB“·G"æVæB†FFT6VÆÂ“¶6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“¶–b††5&öÆR‚&÷væW""Â&FÖ–â"Â&6öÖÖW&6–Â"’—FBæVæB†Ö¶T'WGFöâ‚%6Çf"æ÷fò†÷,:&–ò"Æ7–æ2‚“Óç¶–b‚–çWBçfÇVR—·6†÷uFö7B‚$W66öÆ†æ÷fFFFò6ö×æ†ÖVçFòâ"“·&WGW&çÖv—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö÷÷'GVæ—F–W2òG¶—FVÒæ–GÒ÷7FvVÇ¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·7FvS¦—FVÒç7FvRÆæW‡EöföÆÆ÷u÷WöC§Fô—6ò†–çWBçfÇVR—Ò—Ò“·6†÷uFö7B‚$föÆÆ÷r×W&VvVæFFòâ"“¶v—BÆöDÆÂ‚—Ò—Ò’“·G"æVæB‡FB“·F&öG’æVæB‡G"—Ò—Ð¦gVæ7F–öâ&VæFW%6ÆW2†—FV×2—·6fTÆ—7B‚'6ÆW2"Æ—FV×2Â‡F&öG’Æ—FVÒ“Óç¶6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""“¶6VÆÂ‡G"ÆFFR†—FVÒæ7&VFVEöB’“¶6VÆÂ‡G"Æ—FVÒæ6öçF7CòægVÆÅöæÖWÇÂ$6öçFFò"“¶6VÆÂ‡G"Æ—FVÒç&öGV7CòææÖWÇÂ$öfW'F"“¶6VÆÂ‡G"ÆÖöæW’†—FVÒæÖ÷VçB’“¶6VÆÂ‡G"Æ—FVÒç7FGW2“¶6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“¶–b†—FVÒç7FGW3ÓÓÒ'VæF–ær"—¶–b††5&öÆR‚&÷væW""Â&FÖ–â"Â&f–ææ6R"’—FBæVæB†Ö¶T'WGFöâ‚$6öæf—&Ö"ÖçVÆÖVçFR"Æ7–æ2‚“Óç¶–b‚6öæf—&Ò‚$6öæf—&ÖR6öÖVçFRFWö—2FRfW&–f–6"VfWF—fÖVçFRòvÖVçFò&V6V&–Fòâ"’—&WGW&ã¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷c÷6ÆW2òG¶—FVÒæ–GÒö6öæf—&ÖÇ¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·–ÖVçE÷&VfW&Væ6S¢&6öæf—&Ö6òÖÖçVÂ'Ò—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“¶–b…²'—‚"Â&6&B%Òæ–æ6ÇVFW2†—FVÒç–ÖVçEöÖWF†öB’bf†5&öÆR‚&÷væW""Â&FÖ–â"Â&6öÖÖW&6–Â"Â&f–ææ6R"’—FBæVæB†Ö¶T'WGFöâ‚$6†V6¶÷WB6æF&÷‚"Æ7–æ2‚“Óç¶v—B'Vâ†7–æ2‚“Óç¶6öç7B&W7VÇCÖv—B–ÖVçG2†—FVÒæ–B“¶6öç7BÆ–æ³ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚&"“¶Æ–æ²æ‡&Vc×&W7VÇBæFFæ6†V6¶÷WE÷W&Ã¶Æ–æ²çF&vWCÒ%ö&Ææ²#¶Æ–æ²ç&VÃÒ&æö÷VæW"æ÷&VfW'&W"#¶Æ–æ²æ6Æ–6²‚—Ò—Ò’—×G"æVæB‡FB“·F&öG’æVæB‡G"—Ò—Ð¦gVæ7F–öâ&VæFW$6öçG&7G2†—FV×2—°¢6fTÆ—7B‚&6öçG&7G2"Æ—FV×2Â‡F&öG’Æ—FVÒ“Óç°¢6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""’Ç6ÆSÖ—FVÒç6ÆWÇÇ·ÒÇv†ó×6ÆRæ6öçF7CòægVÆÅöæÖWÇÂ$6öçFFò"ÆöffW#×6ÆRç&öGV7CòææÖWÇÂ$öfW'F#°¢6VÆÂ‡G"Æ—FVÒæ6öçG&7EöçVÖ&W"“¶6VÆÂ‡G"ÆG·v†÷Ò+rG¶öffW'Ò+rG¶ÖöæW’‡6ÆRæÖ÷VçB—Ö“¶6VÆÂ‡G"Æ—FVÒç7FGW2“°¢6VÆÂ‡G"Å¶—FVÒç6VçEöCöVçf–FòG¶FFR†—FVÒç6VçEöB—Ö¢""Æ—FVÒç6–væVEöCö76–æFòG¶FFR†—FVÒç6–væVEöB—Ö¢"%Òæf–ÇFW"„&ööÆVâ’æ¦ö–â‚"+r"—ÇÂ.(	B"“°¢6VÆÂ‡G"Â†—FVÒæ6öçG&7E÷FW‡GÇÂ""’ç6Æ–6RƒÃƒ’“°¢6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"’Æ6äVF—CÖ†5&öÆR‚&÷væW""Â&FÖ–â"Â&6öÖÖW&6–Â"“°¢–b†6äVF—Bbf—FVÒç7FGW3ÓÓÒ&G&gB"—°¢FBæVæB†Ö¶T'WGFöâ‚$VF—F"&67Væ†ò"Â‚“Óç²B‚&6öçG&7BÖ–B"’çfÇVSÖ—FVÒæ–C²B‚&6öçG&7B×6ÆR"’çfÇVSÖ—FVÒç6ÆUö–C²B‚&6öçG&7B×6ÆR"’æF—6&ÆVC×G'VS²B‚&6öçG&7B×FW‡B"’çfÇVSÖ—FVÒæ6öçG&7E÷FW‡C²B‚&6öçG&7B×7V&Ö—B"’çFW‡D6öçFVçCÒ$GVÆ—¦"&67Væ†ò#²B‚&6öçG&7BÖVF—BÖ6æ6VÂ"’æ†–FFVãÖfÇ6S·6†÷uf–Wr‚&6öçG&7G2"—Ò’“°¢FBæVæB†Ö¶T'WGFöâ‚$Ö&6"Vçf–Fò"Æ7–æ2‚“Óç¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö6öçG&7G2òG¶—FVÒæ–GÒ÷7FGW6Ç¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·7FGW3¢'6VçB'Ò—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“°¢FBæVæB†Ö¶T'WGFöâ‚$6æ6VÆ""Æ7–æ2‚“Óç¶–b‚6öæf—&Ò‚$6öæf—&Öò6æ6VÆÖVçFòFW7FR&67Væ†óò"’—&WGW&ã¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö6öçG&7G2òG¶—FVÒæ–GÒ÷7FGW6Ç¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·7FGW3¢&6æ6VÆÆVB'Ò—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“°¢ÖVÇ6R–b†6äVF—Bbf—FVÒç7FGW3ÓÓÒ'6VçB"—°¢FBæVæB†Ö¶T'WGFöâ‚$Ö&6"76–æFò"Æ7–æ2‚“Óç¶–b‚6öæf—&Ò‚$6öæf—&ÖR6öÖVçFRFWö—2FR76–æGW&FW"6–FòVfWF—fÖVçFR6öæ6Ç\:ÖFâ"’—&WGW&ã¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö6öçG&7G2òG¶—FVÒæ–GÒ÷7FGW6Ç¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·7FGW3¢'6–væVB'Ò—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“°¢FBæVæB†Ö¶T'WGFöâ‚$6æ6VÆ""Æ7–æ2‚“Óç¶–b‚6öæf—&Ò‚$6öæf—&ÖVRW7FR6öçG&FòVçf–Fòfö’6æ6VÆFóò"’—&WGW&ã¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cö6öçG&7G2òG¶—FVÒæ–GÒ÷7FGW6Ç¶ÖWF†öC¢%õ5B"Æ&öG“¤¥4ôâç7G&–æv–g’‡·7FGW3¢&6æ6VÆÆVB'Ò—Ò“¶v—BÆöDÆÂ‚—Ò—Ò’“°¢Ð¢G"æVæB‡FB“·F&öG’æVæB‡G"“°¢Ò“°§Ð ¦gVæ7F–öâ&VæFW$f–ææ6R†—FV×2—·6fTÆ—7B‚&f–ææ6RÖVçG&–W2"Æ—FV×2Â‡F&öG’Æ—FVÒ“Óç¶6öç7BG#ÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'G""“¶6VÆÂ‡G"Æ—FVÒæFW67&—F–öâ“¶6VÆÂ‡G"Æ—FVÒæVçG'•÷G—R“¶6VÆÂ‡G"Æ—FVÒæGVUöGÇÂ.(	B"“¶6VÆÂ‡G"ÆÖöæW’†—FVÒæÖ÷VçB’“¶6VÆÂ‡G"Æ—FVÒç7FGW2“¶6öç7BFCÖFö7VÖVçBæ7&VFTVÆVÖVçB‚'FB"“¶–b‚—FVÒç6ÆUö–Bbf—FVÒç7FGW3ÓÓÒ'VæF–ær"—FBæVæB†Ö¶T'WGFöâ†—FVÒæVçG'•÷G—SÓÓÒ&W‡Vç6R#ò$Ö&6"v#¢$6öæf—&Ö"&V6V&–ÖVçFò"Æ7–æ2‚“Óç¶–b†—FVÒæVçG'•÷G—SÓÓÒ&–æ6öÖR"bb6öæf—&Ò‚$6öæf—&ÖR6öÖVçFRFWö—2FRfW&–f–6"VfWF—fÖVçFRò&V6V&–ÖVçFòâ"’—&WGW&ã¶v—B'Vâ†7–æ2‚“Óç¶v—B’†÷cöf–ææ6RòG¶—FVÒæ–GÒ÷6WGFÆVÇ¶ÖWF†öC¢%õ5B"Æ&öG“¢'·Ò'ß4ç«h‘éì¶»§q«^t˜XØÙ\Ü×ÝÚÙ[ˆŠNÚYŠVÈœ™XÛÝ™\žH‹š[š]H—Kš[˜ÛY\Ê\J_]ÚÙ[Š\™]\›ŽØXØÙ\ÜÕÚÙ[]ÚÙ[ŽÚ\ÝÜžKœ™\XÙTÝ]J[ˆ‹Ú[™ÝË›ØØ][Û‹œ]˜[YJÝÚ[™ÝË›ØØ][Û‹œÙX\˜Ú
+NÉ
+›ÙÚ[‹Y›Ü›HŠKšY[]YNÉ
+œÚÝË\™XÛÝ™\žHŠKšY[]YNÉ
+œ™XÛÝ™\žK\™\]Y\ÝY›Ü›HŠKšY[]YNÉ
+œ™XÛÝ™\žK]\]KY›Ü›HŠKšY[Y˜[ÙNÉ
+œ™XÛÝ™\žK]\]K[Y\ÜØYÙHŠK^ÛÛ[]\OOOHš[š]HÈ‘Yš[˜H[XHÙ[šH\˜HÛÛ˜ÛZ\ˆÈÛÛš]HYZ[š\Ý˜]]›ËˆŽˆ‘Yš[˜H[XH›Ý˜HÙ[šH\˜H™XÝ\\˜\ˆÈXÙ\ÜÛËˆŸB‰
+›ÙÛÝ]ŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
 
-function readConfig(){const config=window.DESENROLA_SUPABASE_CONFIG||{};return {url:String(config.url||"").replace(/\/+$/,""),key:String(config.key||"")}}
-function showToast(message){const toast=$("toast");toast.textContent=message;toast.hidden=false;window.setTimeout(()=>{toast.hidden=true},4200)}
-function setNotice(message,isError=false){const box=$("notice");box.textContent=message;box.classList.toggle("error",isError)}
-function normalizedUrl(value){return value.trim().replace(/\/+$/ ,"")}
-function value(id){return $(id).value.trim()}
-function money(amount){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(amount||0))}
-function date(value){if(!value)return "â€”";const d=new Date(value);return Number.isNaN(d.getTime())?"â€”":new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(d)}
-function toIso(value){return value?new Date(value).toISOString():null}
-function toLocalDateTime(value){if(!value)return "";const d=new Date(value);return Number.isNaN(d.getTime())?"":new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
-function cell(row,text){const td=document.createElement("td");td.textContent=text??"â€”";row.append(td);return td}
-function makeButton(label,handler,kind="button-secondary"){const button=document.createElement("button");button.type="button";button.className=kind;button.textContent=label;button.addEventListener("click",handler);return button}
-function hasRole(...roles){return (cache.health?.roles||[]).some(role=>roles.includes(role))}
-function setOptions(id,items,label,valueKey="id",labelKey="full_name",placeholder="Selecione"){
-  const select=$(id),old=select.value;select.replaceChildren();
-  const empty=document.createElement("option");empty.value="";empty.textContent=placeholder;select.append(empty);
-  for(const item of items||[]){const option=document.createElement("option");option.value=item[valueKey];option.textContent=label(item);select.append(option)}
-  if([...select.options].some(option=>option.value===old))select.value=old;
-}
-function fillReferenceLists(){
-  const contacts=cache.contacts||[],products=(cache.products||[]).filter(item=>item.active),experiences=(cache.experiences||[]).filter(item=>item.status==="planned"),contractedSales=new Set((cache.contracts||[]).map(item=>item.sale_id)),sales=(cache.sales||[]).filter(item=>["pending","confirmed"].includes(item.status)),availableContractSales=sales.filter(item=>!contractedSales.has(item.id));
-  for(const id of ["opportunity-contact","sale-contact","appointment-contact","note-contact"])setOptions(id,contacts,(x)=>x.full_name);
-  setOptions("opportunity-product",products,(x)=>x.name,"id","name","Sem oferta definida");
-  setOptions("sale-product",products,(x)=>`${x.name} Â· ${money(x.price)}`,"id","name");
-  setOptions("registration-contact",contacts,(x)=>x.full_name);
-  setOptions("registration-experience",experiences,(x)=>x.name,"id","name");
-  setOptions("registration-sale",sales,(x)=>`${x.contact?.full_name||"Contato"} Â· ${x.product?.name||"Oferta"} Â· ${x.status}`,"id","id","Sem venda vinculada");
-  setOptions("contract-sale",availableContractSales,(x)=>`${x.contact?.full_name||"Contato"} Â· ${x.product?.name||"Oferta"} Â· ${money(x.amount)}`,"id","id","Selecione uma venda");
-}
-function safeList(id,items,render){const target=$(id);target.replaceChildren();for(const item of items||[])render(target,item);if(!items?.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=target.closest("table")?.querySelectorAll("thead th").length||8;td.textContent="Nenhum registro neste ambiente.";tr.append(td);target.append(tr)}}
-function renderContacts(items){
-  safeList("contacts",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,item.full_name+(item.email?` Â· ${item.email}`:""));cell(tr,item.source);const stage=document.createElement("td"),select=document.createElement("select");for(const value of ["lead","qualified","customer","former_customer","disqualified"]){const option=document.createElement("option");option.value=value;option.textContent=value;select.append(option)}select.value=item.lifecycle_stage;select.disabled=!hasRole("owner","admin","commercial");stage.append(select);tr.append(stage);const td=document.createElement("td");if(hasRole("owner","admin","commercial")){td.append(makeButton("Salvar etapa",async()=>{await run(async()=>{await api(`/v1/contacts/${item.id}/stage`,{method:"POST",body:JSON.stringify({lifecycle_stage:select.value})});await loadAll()})}));td.append(makeButton("Criar oportunidade",()=>{$("opportunity-contact").value=item.id;showView("crm")}))}tr.append(td);tbody.append(tr)});
-  $("contact-count").textContent=String(cache.dashboard?.contacts??items?.length??0);
-}
-function renderProducts(items){
-  const list=$("products");list.replaceChildren();
-  for(const item of items||[]){const li=document.createElement("li"),title=document.createElement("strong"),detail=document.createElement("span"),action=document.createElement("div");title.textContent=item.name;detail.textContent=`${money(item.price)} Â· ${item.format||item.duration_text||item.delivery_mode} Â· ${item.active?"ativa":"encerrada"}`;action.className="row-actions";if(hasRole("owner","admin"))action.append(makeButton("Editar",()=>{showView("offers");$("product-id").value=item.id;$("product-code").value=item.code;$("product-name").value=item.name;$("product-category").value=item.category;$("product-mode").value=item.delivery_mode;$("product-price").value=item.price;$("product-format").value=item.format||"";$("product-duration").value=item.duration_text||"";$("product-duration-months").value=item.duration_months||"";$("product-active").value=String(item.active);$("product-description").value=item.description||"";}));li.append(title,detail,action);list.append(li)}
-  $("product-count").textContent=String((items||[]).filter(item=>item.active).length);
-}
-function renderOpportunities(items){safeList("opportunities",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,item.contact?.full_name||"Contato");cell(tr,item.product?.name||"â€”");const stage=document.createElement("td"),select=document.createElement("select");select.dataset.stageId=item.id;for(const optionName of ["new","contacted","qualified","offer_presented","negotiation","won","lost","nurture"]){const o=document.createElement("option");o.value=optionName;o.textContent=optionName;select.append(o)}select.value=item.stage;stage.append(select);tr.append(stage);const followupCell=document.createElement("td"),followup=document.createElement("input");followup.type="datetime-local";followup.value=toLocalDateTime(item.next_follow_up_at);followup.setAttribute("aria-label","PrÃ³ximo acompanhamento");followupCell.append(followup);tr.append(followupCell);const td=document.createElement("td");td.append(makeButton("Salvar etapa e data",async()=>{await run(async()=>{await api(`/v1/opportunities/${item.id}/stage`,{method:"POST",body:JSON.stringify({stage:select.value,next_follow_up_at:toIso(followup.value)})});await loadAll()})}));tr.append(td);tbody.append(tr)})}
-function renderFollowups(items){safeList("followups",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,date(item.next_follow_up_at));cell(tr,`${item.contact?.full_name||"Contato"}${item.contact?.phone?` Â· ${item.contact.phone}`:""}`);cell(tr,item.product?.name||"â€”");cell(tr,item.stage);const dateCell=document.createElement("td"),input=document.createElement("input");input.type="datetime-local";input.setAttribute("aria-label",`Reagendar follow-up de ${item.contact?.full_name||"contato"}`);dateCell.append(input);tr.append(dateCell);const td=document.createElement("td");if(hasRole("owner","admin","commercial"))td.append(makeButton("Salvar novo horÃ¡rio",async()=>{if(!input.value){showToast("Escolha a nova data do acompanhamento.");return}await run(async()=>{await api(`/v1/opportunities/${item.id}/stage`,{method:"POST",body:JSON.stringify({stage:item.stage,next_follow_up_at:toIso(input.value)})});showToast("Follow-up reagendado.");await loadAll()})}));tr.append(td);tbody.append(tr)})}
-function renderSales(items){safeList("sales",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,date(item.created_at));cell(tr,item.contact?.full_name||"Contato");cell(tr,item.product?.name||"Oferta");cell(tr,money(item.amount));cell(tr,item.status);const td=document.createElement("td");if(item.status==="pending"){if(hasRole("owner","admin","finance"))td.append(makeButton("Confirmar manualmente",async()=>{if(!confirm("Confirme somente depois de verificar efetivamente o pagamento recebido."))return;await run(async()=>{await api(`/v1/sales/${item.id}/confirm`,{method:"POST",body:JSON.stringify({payment_reference:"confirmacao-manual"})});await loadAll()})}));if(["pix","card"].includes(item.payment_method)&&hasRole("owner","admin","commercial","finance"))td.append(makeButton("Checkout Sandbox",async()=>{await run(async()=>{const result=await payments(item.id);const link=document.createElement("a");link.href=result.data.checkout_url;link.target="_blank";link.rel="noopener noreferrer";link.click()})}))}tr.append(td);tbody.append(tr)})}
-function renderContracts(items){
-  safeList("contracts",items,(tbody,item)=>{
-    const tr=document.createElement("tr"),sale=item.sale||{},who=sale.contact?.full_name||"Contato",offer=sale.product?.name||"Oferta";
-    cell(tr,item.contract_number);cell(tr,`${who} Â· ${offer} Â· ${money(sale.amount)}`);cell(tr,item.status);
-    cell(tr,[item.sent_at?`Enviado ${date(item.sent_at)}`:"",item.signed_at?`Assinado ${date(item.signed_at)}`:""].filter(Boolean).join(" Â· ")||"â€”");
-    cell(tr,(item.contract_text||"").slice(0,180));
-    const td=document.createElement("td"),canEdit=hasRole("owner","admin","commercial");
-    if(canEdit&&item.status==="draft"){
-      td.append(makeButton("Editar rascunho",()=>{$("contract-id").value=item.id;$("contract-sale").value=item.sale_id;$("contract-sale").disabled=true;$("contract-text").value=item.contract_text;$("contract-submit").textContent="Atualizar rascunho";$("contract-edit-cancel").hidden=false;showView("contracts")}));
-      td.append(makeButton("Marcar enviado",async()=>{await run(async()=>{await api(`/v1/contracts/${item.id}/status`,{method:"POST",body:JSON.stringify({status:"sent"})});await loadAll()})}));
-      td.append(makeButton("Cancelar",async()=>{if(!confirm("Confirma o cancelamento deste rascunho?"))return;await run(async()=>{await api(`/v1/contracts/${item.id}/status`,{method:"POST",body:JSON.stringify({status:"cancelled"})});await loadAll()})}));
-    }else if(canEdit&&item.status==="sent"){
-      td.append(makeButton("Marcar assinado",async()=>{if(!confirm("Confirme somente depois de a assinatura ter sido efetivamente concluÃ­da."))return;await run(async()=>{await api(`/v1/contracts/${item.id}/status`,{method:"POST",body:JSON.stringify({status:"signed"})});await loadAll()})}));
-      td.append(makeButton("Cancelar",async()=>{if(!confirm("Confirma que este contrato enviado foi cancelado?"))return;await run(async()=>{await api(`/v1/contracts/${item.id}/status`,{method:"POST",body:JSON.stringify({status:"cancelled"})});await loadAll()})}));
-    }
-    tr.append(td);tbody.append(tr);
-  });
-}
+OOžØXØÙ\ÜÕÚÙ[HˆŽØÝ\œ™[\Ù\HˆŽÙ›ÜŠÛÛœÝÙ^HÙˆØš™XÝšÙ^\ÊØXÚJJY[]HØXÚVÚÙ^WNÉ
+ÛÜšÜÜXÙHŠKšY[]YNÉ
+›ÙÚ[ˆŠKšY[Y˜[Ù_JNÂ™ØÝ[Y[œ]Y\žTÙ[XÝÜ[
+–Ù]K]šY]×HŠK™›Ü‘XXÚ
+]ÛO˜]Û‹˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
 
-function renderFinance(items){safeList("finance-entries",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,item.description);cell(tr,item.entry_type);cell(tr,item.due_at||"â€”");cell(tr,money(item.amount));cell(tr,item.status);const td=document.createElement("td");if(!item.sale_id&&item.status==="pending")td.append(makeButton(item.entry_type==="expense"?"Marcar paga":"Confirmar recebimento",async()=>{if(item.entry_type==="income"&&!confirm("Confirme somente depois de verificar efetivamente o recebimento."))return;await run(async()=>{await api(`/v1/finance/${item.id}/settle`,{method:"POST",body:"{}"});await loadAll()})}));tr.append(td);tbody.append(tr)})}
-function renderAppointments(items){safeList("appointments",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,`${date(item.starts_at)} â€“ ${date(item.ends_at)}`);cell(tr,item.title);cell(tr,item.contact?.full_name||"â€”");cell(tr,item.status);const td=document.createElement("td");if(item.status==="scheduled")td.append(makeButton("Cancelar",async()=>{await run(async()=>{await api(`/v1/appointments/${item.id}/cancel`,{method:"POST",body:"{}"});await loadAll()})}));tr.append(td);tbody.append(tr)})}
-function renderExperiences(items){const list=$("experiences");list.replaceChildren();for(const item of items||[]){const li=document.createElement("li"),title=document.createElement("strong"),detail=document.createElement("span"),actions=document.createElement("div");title.textContent=item.name;const registrations=(cache.registrations||[]).filter(row=>row.experience_id===item.id&&row.status!=="cancelled").length;detail.textContent=[item.location,item.status,item.price===null?"":money(item.price),item.starts_at?date(item.starts_at):"",item.capacity===null?"":`${registrations}/${item.capacity} vagas`].filter(Boolean).join(" Â· ");actions.className="row-actions";if(hasRole("owner","admin")){const change=async(status)=>{await run(async()=>{await api(`/v1/experiences/${item.id}/status`,{method:"POST",body:JSON.stringify({status})});await loadAll()})};if(item.status==="draft")actions.append(makeButton("Publicar",()=>change("planned")));if(item.status==="planned"){actions.append(makeButton("Concluir",()=>change("completed")));actions.append(makeButton("Cancelar",()=>change("cancelled")))} }li.append(title,detail,actions);list.append(li)}if(!items?.length){const li=document.createElement("li");li.textContent="Nenhuma vivÃªncia cadastrada.";list.append(li)}}
-function renderRegistrations(items){safeList("registrations",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,item.experience?.name||"VivÃªncia");cell(tr,item.contact?.full_name||"Participante");cell(tr,item.status);cell(tr,date(item.created_at));const td=document.createElement("td");if(item.status!=="cancelled"&&hasRole("owner","admin","commercial","facilitator")){const update=async(status)=>{await run(async()=>{await api(`/v1/registrations/${item.id}/status`,{method:"POST",body:JSON.stringify({status})});await loadAll()})};if(item.status==="confirmed")td.append(makeButton("Marcar presenÃ§a",()=>update("attended")));td.append(makeButton("Cancelar",()=>update("cancelled")))}tr.append(td);tbody.append(tr)})}
-function renderMentorships(items){safeList("mentorships",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,item.contact?.full_name||"Mentorado");cell(tr,date(item.started_at));cell(tr,date(item.ends_at));cell(tr,item.status);const td=document.createElement("td");if(item.status==="active")td.append(makeButton("Concluir",async()=>{await run(async()=>{await api(`/v1/mentorships/${item.id}/status`,{method:"POST",body:JSON.stringify({status:"completed"})});await loadAll()})}));tr.append(td);tbody.append(tr)})}
-function renderThreads(items){safeList("threads",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,item.channel);cell(tr,(cache.contacts||[]).find(x=>x.id===item.contact_id)?.full_name||"Contato");cell(tr,item.control_state);const td=document.createElement("td");const human=item.control_state!=="automation";td.append(makeButton(human?"Retomar automaÃ§Ã£o":"Transferir para humano",async()=>{await run(async()=>{await api(`/v1/threads/${item.id}/${human?"resume":"handoff"}`,{method:"POST",body:human?"{}":JSON.stringify({reason:"Transferido pela equipe"})});await loadAll()})}));tr.append(td);tbody.append(tr)})}
-function renderConversations(items){safeList("conversations",items,(tbody,item)=>{const tr=document.createElement("tr");cell(tr,date(item.occurred_at));cell(tr,item.contact?.full_name||"Contato");cell(tr,`${item.direction} Â· ${item.actor_type}`);const source=item.safe_metadata?.campaign_source;cell(tr,`${item.body}${source?` Â· origem: ${source}`:""}`);tbody.append(tr)})}
-function renderDashboard(){const host=$("dashboard-summary");host.replaceChildren();const summary=cache.dashboard||{};if(summary.error){host.textContent="Indicadores indisponÃ­veis para este perfil.";return}const finance=summary.finance||{};const specs=[["Contatos",summary.contacts],["Oportunidades",summary.opportunities],["Follow-ups vencidos",summary.followups_due],["Vendas pendentes",summary.pending_sales],["Atendimentos agendados",summary.appointments],["Mentorias ativas",summary.active_mentorships],["Recebido",finance.income_confirmed,"money"],["Despesas pagas",finance.expenses_confirmed,"money"],["Saldo confirmado",finance.balance_confirmed,"money"]];for(const [name,value,format]of specs){if(value===undefined||value===null)continue;const card=document.createElement("article");card.className="metric";const label=document.createElement("span"),count=document.createElement("strong");label.textContent=name;count.textContent=format==="money"?money(value):String(value);card.append(label,count);host.append(card)}if(!host.childElementCount)host.textContent="Sem indicadores disponÃ­veis para este perfil.";$("contact-count").textContent=String(summary.contacts??"â€”")}
+OOœÚÝÕšY]Ê]Û‹™]\Ù]šY]ÊJJNÂ™ØÝ[Y[œ]Y\žTÙ[XÝÜ[
+–Ù]K\™Yœ™\ÚHŠK™›Ü‘XXÚ
+]ÛO˜]Û‹˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
 
-async function authRequest(email,password){const conf=readConfig();if(!conf.url||!conf.key)throw new Error("A configuraÃ§Ã£o do Supabase estÃ¡ indisponÃ­vel.");const response=await fetch(conf.url+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"Content-Type":"application/json","apikey":conf.key},body:JSON.stringify({email,password})});const data=await response.json();if(!response.ok)throw new Error("NÃ£o foi possÃ­vel entrar. Verifique o usuÃ¡rio autorizado no projeto.");return data}
-async function requestPasswordRecovery(email){const conf=readConfig();const redirectTo=window.location.origin+window.location.pathname;const response=await fetch(conf.url+"/auth/v1/recover?redirect_to="+encodeURIComponent(redirectTo),{method:"POST",headers:{"Content-Type":"application/json","apikey":conf.key},body:JSON.stringify({email})});if(!response.ok)throw new Error("NÃ£o foi possÃ­vel solicitar a recuperaÃ§Ã£o. Confira a URL permitida no Supabase e tente novamente.")}
-async function updateRecoveredPassword(password){const conf=readConfig();const response=await fetch(conf.url+"/auth/v1/user",{method:"PUT",headers:{"Content-Type":"application/json","apikey":conf.key,"Authorization":"Bearer "+accessToken},body:JSON.stringify({password})});if(!response.ok)throw new Error("O link expirou ou nÃ£o Ã© vÃ¡lido. Solicite uma nova recuperaÃ§Ã£o.")}
-async function api(path,options={}){const conf=readConfig();const response=await fetch(conf.url+"/functions/v1/api"+path,{...options,headers:{"Content-Type":"application/json","apikey":conf.key,"Authorization":"Bearer "+accessToken,...(options.headers||{})}});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||"Falha ao consultar o ambiente.");return data}
-async function bootstrapOwner(fullName){const conf=readConfig();const response=await fetch(conf.url+"/functions/v1/bootstrap-owner",{method:"POST",headers:{"Content-Type":"application/json","apikey":conf.key,"Authorization":"Bearer "+accessToken},body:JSON.stringify({full_name:fullName})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"NÃ£o foi possÃ­vel ativar o primeiro acesso.");return data}
-async function payments(saleId){const conf=readConfig();const response=await fetch(conf.url+"/functions/v1/payments",{method:"POST",headers:{"Content-Type":"application/json","apikey":conf.key,"Authorization":"Bearer "+accessToken},body:JSON.stringify({sale_id:saleId,cpf_cnpj:value("checkout-tax-id")})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"Checkout Sandbox indisponÃ­vel.");return data}
-async function safeLoad(path){try{const result=await api(path);return path==="/v1/health"?result:result.data??[]}catch(error){return {error:error.message}}}
-async function loadAll(){
-  setNotice("Verificando acesso...");
-  const health=await safeLoad("/v1/health");cache.health=health;
-  if(health?.error){$("workspace").hidden=true;$("bootstrap-owner").hidden=true;$("login").hidden=false;showToast("SessÃ£o invÃ¡lida ou expirada. Entre novamente.");return}
-  const roles=Array.isArray(health?.roles)?health.roles:[];
-  if(!roles.length){$("workspace").hidden=true;$("bootstrap-owner").hidden=false;$("login").hidden=true;return}
-  $("bootstrap-owner").hidden=true;$("workspace").hidden=false;
-  setNotice("Carregando mÃ³dulos...");
-  const paths={dashboard:"/v1/dashboard",contacts:"/v1/contacts",products:"/v1/products?all=1",opportunities:"/v1/opportunities",followups:"/v1/followups",sales:"/v1/sales",contracts:"/v1/contracts",finance:"/v1/finance",appointments:"/v1/appointments",mentorships:"/v1/mentorships",experiences:"/v1/experiences",registrations:"/v1/registrations",threads:"/v1/threads",conversations:"/v1/conversations"};
-  const entries=await Promise.all(Object.entries(paths).map(async([key,path])=>[key,await safeLoad(path)]));
-  for(const [key,result]of entries)cache[key]=result;
-  const failures=entries.filter(([key,result])=>key!=="health"&&!Array.isArray(result)&&!(key==="dashboard"&&result&&typeof result==="object"&&!result.error));
-  $("role-label").textContent=roles.join(", ")||"sem funÃ§Ã£o";
-  if(!Array.isArray(cache.contacts))cache.contacts=[];if(!Array.isArray(cache.products))cache.products=[];
-  if(!Array.isArray(cache.contracts))cache.contracts=[];
-  renderContacts(cache.contacts);renderProducts(cache.products);renderOpportunities(Array.isArray(cache.opportunities)?cache.opportunities:[]);renderFollowups(Array.isArray(cache.followups)?cache.followups:[]);renderSales(Array.isArray(cache.sales)?cache.sales:[]);renderContracts(cache.contracts);renderFinance(Array.isArray(cache.finance)?cache.finance:[]);renderAppointments(Array.isArray(cache.appointments)?cache.appointments:[]);renderExperiences(Array.isArray(cache.experiences)?cache.experiences:[]);renderRegistrations(Array.isArray(cache.registrations)?cache.registrations:[]);renderMentorships(Array.isArray(cache.mentorships)?cache.mentorships:[]);renderThreads(Array.isArray(cache.threads)?cache.threads:[]);renderConversations(Array.isArray(cache.conversations)?cache.conversations:[]);renderDashboard();fillReferenceLists();
-  $("contract-form").hidden=!hasRole("owner","admin","commercial");
-  setNotice(failures.length?`ConexÃ£o autenticada; alguns mÃ³dulos nÃ£o estÃ£o disponÃ­veis para esta funÃ§Ã£o: ${failures.map(([key])=>key).join(", ")}.`:"ConexÃ£o autenticada. Use somente registros fictÃ­cios neste ambiente.",failures.length>0);
-}
-async function run(action){try{await action()}catch(error){showToast(error.message)}}
-function showView(name){for(const view of document.querySelectorAll(".module-view"))view.hidden=view.id!==`view-${name}`;for(const button of document.querySelectorAll("[data-view]")){if(button.dataset.view===name)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current")}}
+OOœ[ŠØY[
+JJNÂ‚‰
+˜ÛÛ[\Ý]\Ë\™Yœ™\ÚŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
 
-$("login-form").addEventListener("submit",async(event)=>{event.preventDefault();const button=event.currentTarget.querySelector("button");button.disabled=true;try{const data=await authRequest(value("email"),$("password").value);accessToken=data.access_token;currentUser=data.user?.email||value("email");$("password").value="";$("login").hidden=true;$("workspace").hidden=false;$("session-label").textContent=`SessÃ£o autorizada: ${currentUser}`;await loadAll()}catch(error){showToast(error.message)}finally{button.disabled=false}});
-$("show-recovery").addEventListener("click",()=>{$("login-form").hidden=true;$("show-recovery").hidden=true;$("recovery-request-form").hidden=false;$("recovery-email").value=value("email")});
-$("cancel-recovery").addEventListener("click",()=>{$("recovery-request-form").hidden=true;$("login-form").hidden=false;$("show-recovery").hidden=false});
-$("recovery-request-form").addEventListener("submit",async(event)=>{event.preventDefault();const status=$("recovery-request-message");status.textContent="Solicitando link...";try{await requestPasswordRecovery(value("recovery-email"));status.textContent="Se houver uma conta para esse endereÃ§o, enviaremos um link. Confira tambÃ©m a pasta de spam."}catch{status.textContent="NÃ£o foi possÃ­vel solicitar agora. Verifique a URL de retorno permitida no Supabase ou tente mais tarde."}});
-$("recovery-update-form").addEventListener("submit",async(event)=>{event.preventDefault();const password=$("recovery-password").value,confirm=$("recovery-password-confirm").value,status=$("recovery-update-message");if(password.length<12||password!==confirm){status.textContent=password.length<12?"Use uma senha com pelo menos 12 caracteres.":"As senhas nÃ£o coincidem.";return}try{await updateRecoveredPassword(password);history.replaceState(null,"",window.location.pathname+window.location.search);accessToken="";$("recovery-password").value="";$("recovery-password-confirm").value="";$("recovery-update-form").hidden=true;$("login-form").hidden=false;$("show-recovery").hidden=false;status.textContent="Senha atualizada. Entre com a nova senha."}catch(error){status.textContent=error.message}});
-$("bootstrap-owner-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{const button=event.currentTarget.querySelector("button"),status=$("bootstrap-owner-message");button.disabled=true;status.textContent="Validando o primeiro acesso...";try{await bootstrapOwner(value("owner-full-name"));status.textContent="Acesso administrativo ativado.";$("bootstrap-owner").hidden=true;$("workspace").hidden=false;await loadAll()}catch{status.textContent="NÃ£o foi possÃ­vel ativar o primeiro acesso. Confirme o convite e o e-mail empresarial."}finally{button.disabled=false}})});
-function detectPasswordSetup(){const fragment=new URLSearchParams(window.location.hash.replace(/^#/ ,"")),type=fragment.get("type"),token=fragment.get("access_token");if(!["recovery","invite"].includes(type)||!token)return;accessToken=token;history.replaceState(null,"",window.location.pathname+window.location.search);$("login-form").hidden=true;$("show-recovery").hidden=true;$("recovery-request-form").hidden=true;$("recovery-update-form").hidden=false;$("recovery-update-message").textContent=type==="invite"?"Defina uma senha para concluir o convite administrativo.":"Defina uma nova senha para recuperar o acesso."}
-$("logout").addEventListener("click",()=>{accessToken="";currentUser="";for(const key of Object.keys(cache))delete cache[key];$("workspace").hidden=true;$("login").hidden=false});
-document.querySelectorAll("[data-view]").forEach(button=>button.addEventListener("click",()=>showView(button.dataset.view)));
-document.querySelectorAll("[data-refresh]").forEach(button=>button.addEventListener("click",()=>run(loadAll)));
+OOœ[Š™Yœ™\ÚÛÛ[Ý]\ÊJNÂ‰
+˜ÛÛ[Z›ØœË\™Yœ™\ÚŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
 
-$("lead-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api("/v1/contacts",{method:"POST",body:JSON.stringify({full_name:value("lead-name"),email:value("lead-email")||null,phone:value("lead-phone")||null})});event.currentTarget.reset();showToast("Lead cadastrado no CRM.");await loadAll()})});
-$("opportunity-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api("/v1/opportunities",{method:"POST",body:JSON.stringify({contact_id:value("opportunity-contact"),product_id:value("opportunity-product")||null,next_follow_up_at:toIso(value("opportunity-followup"))})});event.currentTarget.reset();showToast("Oportunidade incluÃ­da no funil.");await loadAll()})});
-$("product-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{const id=value("product-id"),data={code:value("product-code"),name:value("product-name"),category:value("product-category"),delivery_mode:value("product-mode"),price:Number(value("product-price")),format:value("product-format"),duration_text:value("product-duration")||null,duration_months:value("product-duration-months")===""?null:Number(value("product-duration-months")),active:value("product-active")==="true",description:value("product-description")};await api(id?`/v1/products/${id}`:"/v1/products",{method:"POST",body:JSON.stringify(data)});event.currentTarget.reset();$("product-id").value="";showToast(id?"Oferta atualizada.":"Oferta cadastrada.");await loadAll()})});
-$("sale-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{const installments=value("sale-method")==="card"?Number(value("sale-installments")):null;await api("/v1/sales",{method:"POST",body:JSON.stringify({contact_id:value("sale-contact"),product_id:value("sale-product"),payment_method:value("sale-method"),installments})});event.currentTarget.reset();$("sale-installments").value="1";showToast("Venda registrada como pendente. O pagamento nÃ£o foi considerado confirmado.");await loadAll()})});
-$("contract-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{const id=value("contract-id"),requestBody=id?{contract_text:value("contract-text")}:{sale_id:value("contract-sale"),contract_text:value("contract-text")};await api(id?`/v1/contracts/${id}`:"/v1/contracts",{method:"POST",body:JSON.stringify(requestBody)});event.currentTarget.reset();$("contract-id").value="";$("contract-sale").disabled=false;$("contract-submit").textContent="Salvar rascunho";$("contract-edit-cancel").hidden=true;showToast(id?"Rascunho atualizado.":"Rascunho registrado.");await loadAll()})});
-$("contract-edit-cancel").addEventListener("click",()=>{$("contract-form").reset();$("contract-id").value="";$("contract-sale").disabled=false;$("contract-submit").textContent="Salvar rascunho";$("contract-edit-cancel").hidden=true});
-$("finance-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api("/v1/finance",{method:"POST",body:JSON.stringify({entry_type:value("finance-type"),description:value("finance-description"),amount:Number(value("finance-amount")),due_at:value("finance-due")||null,category:value("finance-category")||"uncategorized"})});event.currentTarget.reset();showToast("LanÃ§amento registrado como pendente.");await loadAll()})});
-$("appointment-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api("/v1/appointments",{method:"POST",body:JSON.stringify({contact_id:value("appointment-contact")||null,appointment_type:value("appointment-type"),title:value("appointment-title"),starts_at:toIso(value("appointment-start")),ends_at:toIso(value("appointment-end")),location:value("appointment-location")})});event.currentTarget.reset();showToast("HorÃ¡rio adicionado Ã  agenda.");await loadAll()})});
-$("experience-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api("/v1/experiences",{method:"POST",body:JSON.stringify({code:value("experience-code"),name:value("experience-name"),location:value("experience-location"),starts_at:toIso(value("experience-start")),ends_at:toIso(value("experience-end")),price:value("experience-price")===""?null:Number(value("experience-price")),capacity:value("experience-capacity")===""?null:Number(value("experience-capacity")),status:"draft"})});event.currentTarget.reset();showToast("VivÃªncia salva como rascunho.");await loadAll()})});
-$("registration-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api("/v1/registrations",{method:"POST",body:JSON.stringify({experience_id:value("registration-experience"),contact_id:value("registration-contact"),sale_id:value("registration-sale")||null})});event.currentTarget.reset();showToast("InscriÃ§Ã£o cadastrada como pendente.");await loadAll()})});
-$("note-form").addEventListener("submit",event=>{event.preventDefault();run(async()=>{await api(`/v1/contacts/${value("note-contact")}/conversations`,{method:"POST",body:JSON.stringify({body:value("note-body")})});event.currentTarget.reset();showToast("AnotaÃ§Ã£o interna registrada.");await loadAll()})});
+OOœ[ŠØYÛÛ[›ØœÊJNÂ‰
+˜Ø[˜KXÛÛ™šYËY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
 
-detectPasswordSetup();
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝ]ÛY]™[˜Ý\œ™[\™Ù]œ]Y\žTÙ[XÝÜŠ	Ø]Û–Ý\OHœÝX›Z]—IÊNØ]Û‹™\ØX›Y]YNØÛÛœÝÙXÜ™]I
+˜Ø[˜KXÛY[\ÙXÜ™]ŠK˜[YNÝž^Ø]ØZ]ÛÛ[ÝY[ÊØXÝ[ÛŽˆœØ]™WØÛÛ™šYÈ‹›ÝšY\Žˆ˜Ø[˜H‹ÛY[ÚY˜[YJ˜Ø[˜KXÛY[ZYŠKÛY[ÜÙXÜ™]œÙXÜ™]JNÜÚÝÕØ\Ý
+ÛY[ÙXÜ™]ÝX\™YÈ›È˜][ˆŠNØ]ØZ]™Yœ™\ÚÛÛ[Ý]\Ê
+_Yš[˜[^É
+˜Ø[˜KXÛY[\ÙXÜ™]ŠK˜[YOHˆŽØ]Û‹™\ØX›YY˜[Ù__J_JNÂ‰
+˜Ø[˜KXÛÛ›™XÝX]ÛˆŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š\Þ[˜Ê
+OOžØÛÛœÝ™\Ý[X]ØZ]ÛÛ[ÝY[ÊØXÝ[ÛŽˆœÝ\ØØ[˜WÛØ]]ŸJK\Ý[˜][Û[™]ÈT“
+™\Ý[˜]]Üš^˜][Û—Ý\›
+NÚYŠ\Ý[˜][Û‹›ÜšYÚ[ˆOOHšÎ‹ËÝÝÝË˜Ø[˜K˜ÛÛHŸ\Ý[˜][Û‹œ]˜[YHOOH‹Ø\KÛØ]]Ø]]Üš^™HŠ]›ÝÈ™]È\œ›ÜŠ‘\Ý[›ÈÐ]]Ø[˜H[°è[YËˆŠNÝÚ[™ÝË›ØØ][Û‹˜\ÜÚYÛŠ\Ý[˜][Û‹ÔÝš[™Ê
+J_JJNÂ‰
+›Y]šXÛÛÛXÛÛ™šYËY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝ]ÛY]™[˜Ý\œ™[\™Ù]œ]Y\žTÙ[XÝÜŠ	Ø]Û–Ý\OHœÝX›Z]—IÊKÙXÜ™]I
+›Y]šXÛÛÛX\K]ÚÙ[ˆŠK˜[YNØ]Û‹™\ØX›Y]YNÝž^Ø]ØZ]ÛÛ[ÝY[ÊØXÝ[ÛŽˆœØ]™WØÛÛ™šYÈ‹›ÝšY\Žˆ›Y]šXÛÛÛ‹\WÝÚÙ[ŽœÙXÜ™]\Ù\—ÚY˜[YJ›Y]šXÛÛÛ]\Ù\‹ZYŠK›Ù×ÚY˜[YJ›Y]šXÛÛÛX›ÙËZYŠ_JNÜÚÝÕØ\Ý
+•ÚÙ[ˆY]šXÛÛÛÝX\™YÈ›È˜][ÈÛÛ™^0èÛÈZ[™H™XÚ\ØHÙ\ˆ™\šYšXØYKˆŠNØ]ØZ]™Yœ™\ÚÛÛ[Ý]\Ê
+_Yš[˜[^É
+›Y]šXÛÛÛX\K]ÚÙ[ˆŠK˜[YOHˆŽØ]Û‹™\ØX›YY˜[Ù__J_JNÂ‰
+›Y]šXÛÛÛ]™\šYžKX]ÛˆŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š\Þ[˜Ê
+OOžØÛÛœÝ™\Ý[X]ØZ]ÛÛ[ÝY[ÊØXÝ[ÛŽˆ™\šYžWÛY]šXÛÛÛŸJNÚYŠ™\Ý[™\šYšYY
+\ÚÝÕØ\Ý
+ÛÛHY]šXÛÛÛ™\šYšXØYH[HTHÙšXÚX[ˆŠNØ]ØZ]™Yœ™\ÚÛÛ[Ý]\Ê
+_JJNÂ‰
+˜ÛÛ[Y^ÜY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝ]ÛY]™[˜Ý\œ™[\™Ù]œ]Y\žTÙ[XÝÜŠ	Ø]Û–Ý\OHœÝX›Z]—IÊKØØ[]O]˜[YJ˜ÛÛ[\ØÚY[YX]ŠNØ]Û‹™\ØX›Y]YNÝž^ØÛÛœÝ™\ÜÛœÙOX]ØZ]ÛÛ[ÝY[ÊØXÝ[ÛŽˆ˜Ü™X]WÙ^Ü‹\ÚYÛ—Ý\›˜[YJ˜ÛÛ[Y\ÚYÛ‹]\›ŠKØ\[ÛŽ˜[YJ˜ÛÛ[XØ\[ÛˆŠKØÚY[YØ]›™]È]JØØ[]JKÒTÓÔÝš[™Ê
+K[Y^›Û™Nˆ[Y\šXØKÔØ[×Ô][È‹›Ü›X]ˆœ™ÈŸJNÚYŠ\™\ÜÛœÙK™\XØ]J\ÚÝÕØ\Ý
+‘\ÚYÛˆ^ÜYÈ[ÈØ[˜NÈÛÛ™š\›YHÈ›ØÙ\ÜØ[Y[È˜Hš[KˆŠNÙ[ÙHÚÝÕØ\Ý
+‘\ÝHpéØH°èH^\ÝH˜Hš[HÛÛHHY\ÛXH]HHYÙ[™KˆŠNØ]ØZ]ØYÛÛ[›ØœÊ
+_Yš[˜[^Ø]Û‹™\ØX›YY˜[Ù__J_JNÂ‚‰
+›Y]KX\Y›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝ]ÛY]™[˜Ý\œ™[\™Ù]œ]Y\žTÙ[XÝÜŠ˜]Û–Ý\O\ÝX›Z]HŠK\ÙXÜ™]I
+›Y]KX\\ÙXÜ™]ŠK˜[YNØ]Û‹™\ØX›Y]YNÝž^ØÛÛœÝ™\Ý[X]ØZ]Y]PYZ[ŠØXÝ[ÛŽˆœØ]™WØ\‹\ÚY˜[YJ›Y]KX\ZYŠKÛÛ™šY×ÚY˜[YJ›Y]KXÛÛ™šYËZYŠK\ÜÙXÜ™]˜\ÙXÜ™]JNÉ
+›Y]KX\\ÙXÜ™]ŠK˜[YOHˆŽÉ
+›Y]KX\ZYŠK˜[YO\™\Ý[˜\ÚYÉ
+›Y]KXÛÛ™šYËZYŠK˜[YO\™\Ý[˜ÛÛ™šY×ÚYÜÚÝÕØ\Ý
+\QHÛÛ™šYÈQØ[›ÜÎÈ\ÙXÜ™]\›X^™[˜YÈ›ÈÝ\X˜\ÙH˜][ˆŠNØ]ØZ]™Yœ™\ÚY]TÝ]\Ê
+_Yš[˜[^É
+›Y]KX\\ÙXÜ™]ŠK˜[YOHˆŽØ]Û‹™\ØX›YY˜[Ù__J_JNÂ‰
+›Y]K\Ý]\Ë\™Yœ™\ÚŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š™Yœ™\ÚY]TÝ]\ÊJNÂ‰
+›Y]KX\Ú[™\ÜËXÚXÚÈŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š\Þ[˜Ê
+OOžØÛÛœÝÛÛ™\™XYÛÛ™šYÊ
+K™\ÜÛœÙOX]ØZ]™]Ú
+ÛÛ™‹\›
+È‹Ù[˜Ý[ÛœËÝŒKÛY]KX\Ú[™\ÜË[Ø]]\Ý\‹ÛY]Ùˆ”ÔÕ‹XY\œÎžÈÛÛ[U\HŽˆ˜\XØ][Û‹ÚœÛÛˆ‹˜\ZÙ^HŽ˜ÛÛ™‹šÙ^K]]Üš^˜][ÛˆŽˆ™X\™\ˆŠØXØÙ\ÜÕÚÙ[ŸK›ÙNˆžßHŸJK]OX]ØZ]™\ÜÛœÙKšœÛÛŠ
+K˜Ø]Ú
+
+
+OOŠßJJNÚYŠ\™\ÜÛœÙK›ÚÊ]›ÝÈ™]È\œ›ÜŠ]K™\œ›ÜŸ“°èÛÈ›ÚHÜÜðë]™[[šXÚX\ˆH™\šYšXØpéðèÛÈÈÜ°ìÛ[ËˆŠNØÛÛœÝ\Ý[˜][Û[™]ÈT“
+]K˜]]Üš^˜][Û—Ý\›
+NÚYŠ\Ý[˜][Û‹›ÜšYÚ[ˆOOHšÎ‹ËÝÝÝË™˜XÙX›ÛÚË˜ÛÛHŸY\Ý[˜][Û‹œ]˜[YK™[™ÕÚ]
+‹ÙX[ÙËÛØ]]ŠJ]›ÝÈ™]È\œ›ÜŠ‘\Ý[›ÈH]]Üš^˜péðèÛÈY]H[°è[YËˆŠNÝÚ[™ÝË›ØØ][Û‹˜\ÜÚYÛŠ\Ý[˜][Û‹ÔÝš[™Ê
+J_JJNÂ‰
+›Y]K]ÙXšÛÚËXÛÛ™šYÈŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š\Þ[˜Ê
+OOžØÛÛœÝ]OX]ØZ]Y]PYZ[ŠØXÝ[ÛŽˆ™Ù]ÝÙXšÛÚ×ÝÚÙ[ˆŸJNÉ
+›Y]K]ÙXšÛÚË]\›ŠK^ÛÛ[Y]KÙXšÛÚ×Ý\›É
+›Y]K]ÙXšÛÚË]™\šYžK]ÚÙ[ˆŠK^ÛÛ[Y]KÙXšÛÚ×Ý™\šYžWÝÚÙ[ŽÉ
+›Y]K]ÙXšÛÚË]™\šYžK]ÚÙ[ˆŠKšY[Y˜[ÙNÉ
+›Y]K]ÙXšÛÚËXÛÜHŠKšY[Y˜[Ù_JJNÂ‰
+›Y]K]ÙXšÛÚËXÛÜHŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š\Þ[˜Ê
+OOžØ]ØZ]˜]šYØ]Ü‹˜Û\›Ø\™Üš]U^
+	
+›Y]K]ÙXšÛÚË]™\šYžK]ÚÙ[ˆŠK^ÛÛ[
+NÜÚÝÕØ\Ý
+•™\šYžHÚÙ[ˆÛÜXYËˆŠ_JJNÂ‰
+›Y]KZ[œÝYÜ˜[KXÛÛ›™XÝŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOœ[Š\Þ[˜Ê
+OOžØÛÛœÝÛÛ™\™XYÛÛ™šYÊ
+K™\ÜÛœÙOX]ØZ]™]Ú
+ÛÛ™‹\›
+È‹Ù[˜Ý[ÛœËÝŒKÛY]KZ[œÝYÜ˜[K[Ø]]\Ý\‹ÛY]Ùˆ”ÔÕ‹XY\œÎžÈÛÛ[U\HŽˆ˜\XØ][Û‹ÚœÛÛˆ‹˜\ZÙ^HŽ˜ÛÛ™‹šÙ^K]]Üš^˜][ÛˆŽˆ™X\™\ˆŠØXØÙ\ÜÕÚÙ[ŸK›ÙNˆžßHŸJK]OX]ØZ]™\ÜÛœÙKšœÛÛŠ
+K˜Ø]Ú
+
+
+OOŠßJJNÚYŠ\™\ÜÛœÙK›ÚÊ]›ÝÈ™]È\œ›ÜŠ]K™\œ›ÜŸ“°èÛÈ›ÚHÜÜðë]™[[šXÚX\ˆÈÐ]]Y]KˆŠNØÛÛœÝ\Ý[˜][Û[™]ÈT“
+]K˜]]Üš^˜][Û—Ý\›
+NÚYŠ\Ý[˜][Û‹›ÜšYÚ[ˆOOHšÎ‹ËÝÝÝË™˜XÙX›ÛÚË˜ÛÛHŸY\Ý[˜][Û‹œ]˜[YK™[™ÕÚ]
+‹ÙX[ÙËÛØ]]ŠJ]›ÝÈ™]È\œ›ÜŠ‘\Ý[›ÈH]]Üš^˜péðèÛÈY]H[°è[YËˆŠNÝÚ[™ÝË›ØØ][Û‹˜\ÜÚYÛŠ\Ý[˜][Û‹ÔÝš[™Ê
+J_JJNÂ‰
+›Y]K\X›\ÚY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžÚYŠXÛÛ™š\›JÛÛ™š\›XHHX›XØpéðèÛÈ[YYX]H\ÝH[XYÙ[HHYÙ[™H[HÜš\ÝX[™Xœš]Ë™\Ù[œ›ÛOÈŠJ\™]\›ŽØÛÛœÝ]ÛY]™[˜Ý\œ™[\™Ù]œ]Y\žTÙ[XÝÜŠ˜]Û–Ý\O\ÝX›Z]HŠK™\Ý[I
+›Y]K\X›\Ú\™\Ý[ŠNØ]Û‹™\ØX›Y]YNÜ™\Ý[^ÛÛ[H”X›XØ[™È[HTHÙšXÚX[HY]K‹‹ˆŽÝž^ØÛÛœÝ™\ÜÛœÙOX]ØZ]Y]PYZ[ŠØXÝ[ÛŽˆœX›\ÚÚ[XYÙH‹ÛÛ™š\›YYYK[XYÙWÝ\›˜[YJ›Y]KZ[XYÙK]\›ŠKØ\[ÛŽ˜[YJ›Y]KXØ\[ÛˆŠ_JNÜ™\Ý[^ÛÛ[XX›XØpéðèÛÈÛÛ™š\›XYKˆQÈÛÛpî™Îˆ	Ü™\ÜÛœÙK›YYXWÚYK˜ÜÚÝÕØ\Ý
+ÛÛpî™ÈX›XØYÈ›È[œÝYÜ˜[KˆŠ_XØ]Ú
+\œ›ÜŠ^Ü™\Ý[^ÛÛ[Y\œ›Ü‹›Y\ÜØYÙNÝ›ÝÈ\œ›ÜŸYš[˜[^Ø]Û‹™\ØX›YY˜[Ù__J_JNÂ‚‰
+›XYY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\J‹ÝŒKØÛÛXÝÈ‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJÙ[Û˜[YN˜[YJ›XY[˜[YHŠK[XZ[˜[YJ›XYY[XZ[Š_[Û™N˜[YJ›XY\Û™HŠ_[J_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+“XYØY\Ý˜YÈ›ÈÔ“KˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+›ÜÜ[š]KY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\J‹ÝŒKÛÜÜ[š]Y\È‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJØÛÛXÝÚY˜[YJ›ÜÜ[š]KXÛÛXÝŠK›ÙXÝÚY˜[YJ›ÜÜ[š]K\›ÙXÝŠ_[™^Ù›ÛÝ×Ý\Ø]Ò\ÛÊ˜[YJ›ÜÜ[š]KY›ÛÝÝ\ŠJ_J_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+“ÜÜ[šYYH[˜ÛpëYH›È[š[ˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+œ›ÙXÝY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝY]˜[YJœ›ÙXÝZYŠK]O^ØÛÙN˜[YJœ›ÙXÝXÛÙHŠK˜[YN˜[YJœ›ÙXÝ[˜[YHŠKØ]YÛÜžN˜[YJœ›ÙXÝXØ]YÛÜžHŠK[]™\žWÛ[ÙN˜[YJœ›ÙXÝ[[ÙHŠKšXÙN“[X™\Š˜[YJœ›ÙXÝ\šXÙHŠJK›Ü›X]˜[YJœ›ÙXÝY›Ü›X]ŠK\˜][Û—Ý^˜[YJœ›ÙXÝY\˜][ÛˆŠ_[\˜][Û—Û[ÛÎ˜[YJœ›ÙXÝY\˜][Û‹[[ÛÈŠOOOHˆÛ[“[X™\Š˜[YJœ›ÙXÝY\˜][Û‹[[ÛÈŠJKXÝ]™N˜[YJœ›ÙXÝXXÝ]™HŠOOOHYH‹\ØÜš\[ÛŽ˜[YJœ›ÙXÝY\ØÜš\[ÛˆŠ_NØ]ØZ]\JYØÝŒKÜ›ÙXÝËÉÚYXˆ‹ÝŒKÜ›ÙXÝÈ‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJ]J_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÉ
+œ›ÙXÝZYŠK˜[YOHˆŽÜÚÝÕØ\Ý
+YÈ“Ù™\H]X[^˜YKˆŽˆ“Ù™\HØY\Ý˜YKˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+œØ[KY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝ[œÝ[Y[Ï]˜[YJœØ[K[Y]ÙŠOOOH˜Ø\™Ó[X™\Š˜[YJœØ[KZ[œÝ[Y[ÈŠJN›[Ø]ØZ]\J‹ÝŒKÜØ[\È‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJØÛÛXÝÚY˜[YJœØ[KXÛÛXÝŠK›ÙXÝÚY˜[YJœØ[K\›ÙXÝŠK^[Y[ÛY]Ù˜[YJœØ[K[Y]ÙŠK[œÝ[Y[ßJ_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÉ
+œØ[KZ[œÝ[Y[ÈŠK˜[YOHŒHŽÜÚÝÕØ\Ý
+•™[™H™YÚ\Ý˜YHÛÛ[È[™[KˆÈYØ[Y[È°èÛÈ›ÚHÛÛœÚY\˜YÈÛÛ™š\›XYËˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+˜ÛÛ˜XÝY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØÛÛœÝY]˜[YJ˜ÛÛ˜XÝZYŠK™\]Y\Ý›ÙOZYÞØÛÛ˜XÝÝ^˜[YJ˜ÛÛ˜XÝ]^Š_NžÜØ[WÚY˜[YJ˜ÛÛ˜XÝ\Ø[HŠKÛÛ˜XÝÝ^˜[YJ˜ÛÛ˜XÝ]^Š_NØ]ØZ]\JYØÝŒKØÛÛ˜XÝËÉÚYXˆ‹ÝŒKØÛÛ˜XÝÈ‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJ™\]Y\Ý›ÙJ_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÉ
+˜ÛÛ˜XÝZYŠK˜[YOHˆŽÉ
+˜ÛÛ˜XÝ\Ø[HŠK™\ØX›YY˜[ÙNÉ
+˜ÛÛ˜XÝ\ÝX›Z]ŠK^ÛÛ[H”Ø[˜\ˆ˜\ØÝ[šÈŽÉ
+˜ÛÛ˜XÝYY]XØ[˜Ù[ŠKšY[]YNÜÚÝÕØ\Ý
+YÈ”˜\ØÝ[šÈ]X[^˜YËˆŽˆ”˜\ØÝ[šÈ™YÚ\Ý˜YËˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+˜ÛÛ˜XÝYY]XØ[˜Ù[ŠK˜Y]™[\Ý[™\Š˜ÛXÚÈ‹
+
+OOžÉ
+˜ÛÛ˜XÝY›Ü›HŠKœ™\Ù]
+
+NÉ
+˜ÛÛ˜XÝZYŠK˜[YOHˆŽÉ
+˜ÛÛ˜XÝ\Ø[HŠK™\ØX›YY˜[ÙNÉ
+˜ÛÛ˜XÝ\ÝX›Z]ŠK^ÛÛ[H”Ø[˜\ˆ˜\ØÝ[šÈŽÉ
+˜ÛÛ˜XÝYY]XØ[˜Ù[ŠKšY[]Y_JNÂ‰
+™š[˜[˜ÙKY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\J‹ÝŒKÙš[˜[˜ÙH‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJÙ[žWÝ\N˜[YJ™š[˜[˜ÙK]\HŠK\ØÜš\[ÛŽ˜[YJ™š[˜[˜ÙKY\ØÜš\[ÛˆŠK[[Ý[“[X™\Š˜[YJ™š[˜[˜ÙKX[[Ý[ŠJKYWØ]˜[YJ™š[˜[˜ÙKYYHŠ_[Ø]YÛÜžN˜[YJ™š[˜[˜ÙKXØ]YÛÜžHŠ_[˜Ø]YÛÜš^™YŸJ_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+“[°éØ[Y[È™YÚ\Ý˜YÈÛÛ[È[™[KˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+˜\Ú[Y[Y›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\J‹ÝŒKØ\Ú[Y[È‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJØÛÛXÝÚY˜[YJ˜\Ú[Y[XÛÛXÝŠ_[\Ú[Y[Ý\N˜[YJ˜\Ú[Y[]\HŠK]N˜[YJ˜\Ú[Y[]]HŠKÝ\×Ø]Ò\ÛÊ˜[YJ˜\Ú[Y[\Ý\ŠJK[™×Ø]Ò\ÛÊ˜[YJ˜\Ú[Y[Y[™ŠJKØØ][ÛŽ˜[YJ˜\Ú[Y[[ØØ][ÛˆŠ_J_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+’Ü°è\š[ÈYXÚ[Û˜YÈ0èYÙ[™KˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+™^\šY[˜ÙKY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\J‹ÝŒKÙ^\šY[˜Ù\È‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJØÛÙN˜[YJ™^\šY[˜ÙKXÛÙHŠK˜[YN˜[YJ™^\šY[˜ÙK[˜[YHŠKØØ][ÛŽ˜[YJ™^\šY[˜ÙK[ØØ][ÛˆŠKÝ\×Ø]Ò\ÛÊ˜[YJ™^\šY[˜ÙK\Ý\ŠJK[™×Ø]Ò\ÛÊ˜[YJ™^\šY[˜ÙKY[™ŠJKšXÙN˜[YJ™^\šY[˜ÙK\šXÙHŠOOOHˆÛ[“[X™\Š˜[YJ™^\šY[˜ÙK\šXÙHŠJKØ\XÚ]N˜[YJ™^\šY[˜ÙKXØ\XÚ]HŠOOOHˆÛ[“[X™\Š˜[YJ™^\šY[˜ÙKXØ\XÚ]HŠJKÝ]\Îˆ™˜YŸJ_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+•š]°ê›˜ÚXHØ[˜HÛÛ[È˜\ØÝ[šËˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+œ™YÚ\Ý˜][Û‹Y›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\J‹ÝŒKÜ™YÚ\Ý˜][ÛœÈ‹ÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJÙ^\šY[˜ÙWÚY˜[YJœ™YÚ\Ý˜][Û‹Y^\šY[˜ÙHŠKÛÛXÝÚY˜[YJœ™YÚ\Ý˜][Û‹XÛÛXÝŠKØ[WÚY˜[YJœ™YÚ\Ý˜][Û‹\Ø[HŠ_[J_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+’[œØÜšpéðèÛÈØY\Ý˜YHÛÛ[È[™[KˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‰
+››ÝKY›Ü›HŠK˜Y]™[\Ý[™\ŠœÝX›Z]‹]™[OžÙ]™[œ™]™[Y˜][
+
+NÜ[Š\Þ[˜Ê
+OOžØ]ØZ]\JÝŒKØÛÛXÝËÉÝ˜[YJ››ÝKXÛÛXÝŠ_KØÛÛ™\œØ][ÛœØÛY]Ùˆ”ÔÕ‹›ÙN’”ÓÓ‹œÝš[™ÚYžJØ›ÙN˜[YJ››ÝKX›ÙHŠ_J_JNÙ]™[˜Ý\œ™[\™Ù]œ™\Ù]
+
+NÜÚÝÕØ\Ý
+[›ÝpéðèÛÈ[\›˜H™YÚ\Ý˜YKˆŠNØ]ØZ]ØY[
+
+_J_JNÂ‚™]XÝ\ÜÝÛÜ™Ù]\
+
+NÂœÚÝÓY]SÐ]]™\Ý[
+
+NÂœÚÝÓY]P\Ú[™\ÜÓÐ]]™\Ý[
+
+NÂ

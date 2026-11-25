@@ -25,4 +25,3 @@ export function buildInterestWhatsAppUrl({ name, phone, email = "", focus = "pre
 }
 
 export const BUSINESS_WHATSAPP_NUMBER = BUSINESS_WHATSAPP;
-
