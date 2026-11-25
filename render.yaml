@@ -43,5 +43,5 @@ services:
         value: camera=(), microphone=(), geolocation=()
       - path: /*
         name: Content-Security-Policy
-        value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://nmkneyzyxxhebkurgimh.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self' https://nmkneyzyxxhebkurgimh.supabase.co"
+        value: "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://majpjlklkbswvvxwpvdm.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self' https://majpjlklkbswvvxwpvdm.supabase.co"
 
