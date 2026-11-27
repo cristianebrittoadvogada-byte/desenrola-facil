@@ -80,6 +80,17 @@ async function saveSettings(admin: ReturnType<typeof createClient>, userId: stri
   if (error) throw new Error("integration_settings_save_failed");
 }
 
+async function subscribeInstagramMessages({ accountId, accessToken }: { accountId: string; accessToken: string }) {
+  if (!/^\d{5,32}$/.test(accountId) || accessToken.length < 20) throw new Error("instagram_credentials_invalid");
+  const response = await fetch(`https://graph.facebook.com/${GRAPH_VERSION}/${accountId}/subscribed_apps`, {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ subscribed_fields: "messages", access_token: accessToken }),
+  });
+  const payload = await response.json().catch(() => null);
+  if (!response.ok || payload?.error || payload?.success !== true) throw new Error("instagram_webhook_subscription_failed");
+}
+
 async function ensureUsableCredentials(admin: ReturnType<typeof createClient>, userId: string, settings: Record<string, unknown>) {
   const secretId = String(settings.secret_reference ?? "");
   if (!secretId) throw new Error("instagram_not_connected");
@@ -202,6 +213,29 @@ Deno.serve(async (request: Request) => {
       return json({ webhook_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-webhook`, webhook_verify_token: secret.verify_token }, 200, origin);
     }
 
+    if (action === "subscribe_messages") {
+      const usable = await ensureUsableCredentials(context.admin, context.user.id, settings as Record<string, unknown> ?? {});
+      await subscribeInstagramMessages({ accountId: usable.identity.id, accessToken: usable.accessToken });
+      const subscribedAt = new Date().toISOString();
+      const nextSettings = {
+        ...settings,
+        public_config: {
+          ...(settings?.public_config ?? {}),
+          messages_webhook_subscribed: true,
+          messages_webhook_subscribed_at: subscribedAt,
+          messages_webhook_subscribed_account_id: usable.identity.id,
+        },
+      };
+      await saveSettings(context.admin, context.user.id, nextSettings);
+      return json({
+        subscribed: true,
+        field: "messages",
+        username: usable.identity.username,
+        account_id: usable.identity.id,
+        subscribed_at: subscribedAt,
+      }, 200, origin);
+    }
+
     if (action === "status") {
       const appConfigured = Boolean(settings?.secret_reference && /^\d{5,32}$/.test(String(settings?.public_config?.app_id ?? "")) && /^\d{8,32}$/.test(String(settings?.public_config?.config_id ?? "")));
       if (!appConfigured) return json({ status: "not_configured", app_configured: false, connected: false,
@@ -217,6 +251,8 @@ Deno.serve(async (request: Request) => {
           status: "configured", app_configured: true, connected: true,
           username: usable.identity.username, account_id: usable.identity.id,
           configured_permissions: settings?.public_config?.configured_permissions ?? [],
+          messages_webhook_subscribed: settings?.public_config?.messages_webhook_subscribed === true,
+          messages_webhook_subscribed_at: settings?.public_config?.messages_webhook_subscribed_at ?? null,
           token_expires_at: usable.expiresAt, refresh_warning: usable.refreshWarning,
           app_id: settings?.public_config?.app_id, config_id: settings?.public_config?.config_id, callback_url: settings?.public_config?.callback_url,
           business_callback_url: `${SUPABASE_URL.replace(/\/+$/, "")}/functions/v1/meta-business-oauth-callback`, business_check: businessCheck,
@@ -245,4 +281,5 @@ Deno.serve(async (request: Request) => {
     return json({ error: code }, 503, origin);
   }
 });
+
 

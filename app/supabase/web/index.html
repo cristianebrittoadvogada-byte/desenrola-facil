@@ -188,6 +188,9 @@
         <article class="panel">
           <div class="section-heading"><div><p class="eyebrow">META · INSTAGRAM</p><h3>Conexão oficial</h3></div><button id="meta-status-refresh" class="button-secondary" type="button">Verificar conexão</button></div>
           <p id="meta-instagram-status" class="notice" role="status" aria-live="polite">Verificando integração...</p>
+          <p id="meta-instagram-webhook-status" class="fine-print" role="status" aria-live="polite">Aguardando o estado da inscrição de mensagens.</p>
+          <button id="meta-instagram-subscribe" class="button-secondary" type="button" disabled>Ativar recebimento de mensagens</button>
+          <p class="muted">Ao ativar, as mensagens diretas enviadas a @cristianebritto.desenrola serão recebidas pelo webhook conectado e poderão gerar respostas automáticas da IA.</p>
           <p class="muted">O OAuth usa o Login Unificado oficial da Meta para apps novos, solicita perfil, publicação, mensagens e comentários, sem permissões de anúncios, e valida que a conta autorizada é @cristianebritto.desenrola.</p>
           <form id="meta-app-form" class="form-grid">
             <label>Meta App ID<input id="meta-app-id" inputmode="numeric" autocomplete="off" maxlength="32" required></label>
@@ -267,5 +270,6 @@
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
+
 
 
